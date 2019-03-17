@@ -1,83 +1,49 @@
 {% extends "default.html" %}
 
-{% block content %}
-<body id="page-top">
-<header class="bg-danger text-white">
-    <div id="particles-js"></div>
-    <nav class="navbar osahan-navbar navbar-expand-lg navbar-dark" id="mainNav">
-        <div class="container">
-            <a class="navbar-brand js-scroll-trigger" href="#page-top"><img class="img-fluid" src="../static/img/logo.png" alt=""></a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive"
-                    aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarResponsive">
-                <ul class="navbar-nav ml-auto">
-                    <li class="nav-item">
-                        <a class="nav-link js-scroll-trigger" href="#page-top">Домой</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link js-scroll-trigger" href="#amazing-dashboard">О Python</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link js-scroll-trigger" href="#why-us">Документация</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link js-scroll-trigger" href="#features-mid">Основные принципы Python</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link js-scroll-trigger" href="#testimonials">Основные функции</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link js-scroll-trigger" href="#team">ООП</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link js-scroll-trigger" href="#download-app">Начать работу</a>
-                    </li>
-                </ul>
+{% block header %}
+<section class="banner-block pb-0" id="banner">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 text-center">
+                <h1 class="text-white"><strong>Python</strong> Documentation Page</h1>
+                <p class="lead mb-5 text-white">A Page For a Developments</p>
+                <p class="mb-0">
+                    <button type="button" class="btn btn-light btn-lg"><a class="nav-link js-scroll-trigger"
+                                                                          href="#amazing-dashboard">О Python</a>
+                    </button>
+                    <button type="button" class="btn btn-outline-light btn-lg"><a class="nav-link js-scroll-trigger"
+                                                                                  href="#why-us"
+                                                                                  style="color: white">Документация</a>
+                    </button>
+                    <button type="button" class="btn btn-outline-light btn-lg"><a class="nav-link js-scroll-trigger"
+                                                                                  href="#features-mid"
+                                                                                  style="color: white">Основы
+                        Python</a></button>
+                    <button type="button" class="btn btn-outline-light btn-lg"><a class="nav-link js-scroll-trigger"
+                                                                                  href="#testimonials"
+                                                                                  style="color: white">Основные
+                        функции</a></button>
+                    <button type="button" class="btn btn-outline-light btn-lg"><a class="nav-link js-scroll-trigger"
+                                                                                  href="#team"
+                                                                                  style="color: white">ООП</a>
+                    </button>
+                    <button type="button" class="btn btn-outline-light btn-lg"><a class="nav-link js-scroll-trigger"
+                                                                                  href="#download-app"
+                                                                                  style="color: white">Начать
+                        работу</a></button>
+                </p>
+                <div class="mb-5"></div>
+                <img class="img-fluid mt-5 wow fadeInUp" src="../static/img/phone2.png" alt="">
             </div>
         </div>
-    </nav>
-    <section class="banner-block pb-0" id="banner">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-12 text-center">
-                    <h1 class="text-white"><strong>Python</strong> Documentation Page</h1>
-                    <p class="lead mb-5 text-white">A Page For a Developments</p>
-                    <p class="mb-0">
-                        <button type="button" class="btn btn-light btn-lg"><a class="nav-link js-scroll-trigger"
-                                                                              href="#amazing-dashboard">О Python</a>
-                        </button>
-                        <button type="button" class="btn btn-outline-light btn-lg"><a class="nav-link js-scroll-trigger"
-                                                                                      href="#why-us"
-                                                                                      style="color: white">Документация</a>
-                        </button>
-                        <button type="button" class="btn btn-outline-light btn-lg"><a class="nav-link js-scroll-trigger"
-                                                                                      href="#features-mid"
-                                                                                      style="color: white">Основы
-                            Python</a></button>
-                        <button type="button" class="btn btn-outline-light btn-lg"><a class="nav-link js-scroll-trigger"
-                                                                                      href="#testimonials"
-                                                                                      style="color: white">Основные
-                            функции</a></button>
-                        <button type="button" class="btn btn-outline-light btn-lg"><a class="nav-link js-scroll-trigger"
-                                                                                      href="#team" style="color: white">ООП</a>
-                        </button>
-                        <button type="button" class="btn btn-outline-light btn-lg"><a class="nav-link js-scroll-trigger"
-                                                                                      href="#download-app"
-                                                                                      style="color: white">Начать
-                            работу</a></button>
-                    </p>
-                    <div class="mb-5"></div>
-                    <img class="img-fluid mt-5 wow fadeInUp" src="../static/img/phone2.png" alt="">
-                </div>
-            </div>
-        </div>
-    </section>
-    <div class="effectiv">
-        <img class="svg" src="../static/img/bg.svg" alt=""/>
     </div>
-</header>
+</section>
+<div class="effectiv">
+    <img class="svg" src="../static/img/bg.svg" alt=""/>
+</div>
+{% endblock %}
+{% block body %}
+
 <section class="amazing-dashboard-block" id="amazing-dashboard">
     <div class="container">
         <div class="row">
@@ -312,9 +278,11 @@
                     <h2 class="mb-2">Методы класса</h2>
                     <span class="section-title-line mb-4"></span>
                     <p class="mb-5">В Python'е метод можно определить и/или перегрузить таким образом:
-                        <span class="text-danger"> <strong>def name(self, param1, *args, **kwargs):<br>...<br></strong></span> - Где name - имя метода, self - обязательный
+                        <span class="text-danger"> <strong>def name(self, param1, *args, **kwargs):<br>...<br></strong></span>
+                        - Где name - имя метода, self - обязательный
                         параметр, далее идут параметры, как и при обычных функциях. Чтобы получить доступ к методам
-                        наследуемого класса, нужно использовать <span class = "text-danger"><strong>self.__super__()</strong></span>
+                        наследуемого класса, нужно использовать <span
+                                class="text-danger"><strong>self.__super__()</strong></span>
                     </p>
                 </div>
             </div>
@@ -369,6 +337,5 @@
         </div>
     </div>
 </section>
-</body>
 {% endblock %}
 

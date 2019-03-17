@@ -22,12 +22,54 @@
     <!-- Custom styles for this template -->
     <link href="../static/css/osahan.css" rel="stylesheet">
 </head>
-{% block content %}{% endblock %}
+<body id="page-top">
+<header class="bg-danger text-white">
+    <div id="particles-js"></div>
+    <nav class="navbar osahan-navbar navbar-expand-lg navbar-dark" id="mainNav">
+        <div class="container">
+            <a class="navbar-brand js-scroll-trigger" href="#page-top"><img class="img-fluid"
+                                                                            src="../static/img/logo.png" alt=""></a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive"
+                    aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarResponsive">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item">
+                        <a class="nav-link js-scroll-trigger" href="/start#page-top">Домой</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link js-scroll-trigger" href="/start#amazing-dashboard">О Python</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link js-scroll-trigger" href="/start#why-us">Документация</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link js-scroll-trigger" href="/start#features-mid">Основные принципы Python</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link js-scroll-trigger" href="/start#testimonials">Основные функции</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link js-scroll-trigger" href="/start#team">ООП</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link js-scroll-trigger" href="/start#download-app">Начать работу</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    {% block header %}{%endblock%}
+</header>
+{% block body %}{% endblock %}
+</body>
 <footer class="py-5 text-center ">
     <div class="container">
         <div class="social-icons mb-3">
             <a href="https://vk.com/pydocs" target="_blank"><i class="fab fa-vk"></i></a>
-            <a href="https://plus.google.com/u/3/115740275818508487725" target="_blank"><i class="fab fa-google-plus"></i></a>
+            <a href="https://plus.google.com/u/3/115740275818508487725" target="_blank"><i
+                    class="fab fa-google-plus"></i></a>
             <a href="https://twitter.com/PyDocs" target="_blank"><i class="fab fa-twitter"></i></a>
         </div>
         <p class="mt-0 mb-0">&copy; Copyright 2018 Osahan. All Rights Reserved</p>
@@ -51,4 +93,4 @@
 <script src="../static/vendor/animate/wow.min.js"></script>
 <!-- Custom JavaScript -->
 <script src="../static/vendor/custom/custom.js"></script>
-</html>>
+</html>
