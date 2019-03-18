@@ -1,5 +1,6 @@
-from flask import render_template, Flask, redirect, request
+from flask import render_template, Flask, redirect, request, make_response
 from flask_sqlalchemy import SQLAlchemy
+from datetime import timedelta, datetime
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///main_database.db'
@@ -7,6 +8,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
 
+# класс пользователя в базе данных
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     nickname = db.Column(db.String(120), unique=True, nullable=False)
@@ -35,6 +37,34 @@ def error_404(error):
     return render_template('not-found.html')
 
 
+@app.route('/profile', methods=['GET'])
+def profile():
+    print(request.cookies.get('signin'))
+    if request.cookies.get('signin'):
+        return redirect('/start')
+    else:
+        return redirect('/signin')
+
+
+@app.route('/signin', methods=['POST', 'GET'])
+def signin():
+    if request.method == 'GET':
+        return render_template('signin.html')
+    elif request.method == 'POST':
+        nickname = request.form.get('nickname')
+        password = request.form.get('password')
+        if db.session.query(User.id).filter_by(nickname=nickname, password=password).scalar():
+            resp = make_response('/start')
+            resp.set_cookie('signin', '1',
+                                expires=datetime.now() + timedelta(days=30))
+            resp.set_cookie('nickname', nickname,
+                            expires=datetime.now() + timedelta(days=30))
+            resp.set_cookie('nickname', nickname)
+            return redirect('/start')
+        else:
+            return redirect('/404')
+
+
 @app.route('/signup', methods=['POST', 'GET'])
 def signup():
     if request.method == 'POST':
@@ -52,7 +82,7 @@ def signup():
         db.session.add(user)
         db.session.commit()
         return redirect('/start')
-    else:
+    elif request.method == 'GET':
         return render_template('signup.html')
 
 
