@@ -1,0 +1,16 @@
+{% extends "default.html" %}
+
+{% block header %}
+<div class="container">
+    <section class="pt-4 pb-5 error-page-main-inner">
+        <form method="post" class="text-center ml-5 mt-md-5 mr-5 inner-section-padding ">
+            <input type="text" class="form-control mt-md-2 " name="nickname" placeholder="Type nickname here..">
+            <input type="email" class="form-control mt-md-2" name="email" placeholder="Type nickname here..">
+            <input type="password" class="form-control mt-md-2" name="password" placeholder="Type password here..">
+            <input type="password" class="form-control mt-md-2" name="password_submit" placeholder="Submit password..">
+            <button type="submit" class="btn btn-primary btn-lg icofont icofont-ui-home">Sign Up</button>
+        </form>
+    </section>
+</div>
+
+{% endblock %}

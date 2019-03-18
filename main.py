@@ -41,9 +41,12 @@ def signup():
         nickname = request.form.get('nickname')
         email = request.form.get('email')
         password = request.form.get('password')
+        # if db.session.query(User.id).filter_by(nickname=nickname).scalar():
+
         user = User(nickname=nickname, email=email, password=password)
         db.session.add(user)
         db.session.commit()
+        return request
     else:
         return render_template('signup.html')
 
