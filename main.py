@@ -41,12 +41,17 @@ def signup():
         nickname = request.form.get('nickname')
         email = request.form.get('email')
         password = request.form.get('password')
-        # if db.session.query(User.id).filter_by(nickname=nickname).scalar():
+        password_submit = request.form.get('password_submit')
+        conditional_1 = db.session.query(User.id).filter_by(nickname=nickname).scalar()
+        conditional_2 = password != password_submit
+        if conditional_1 or conditional_2:
+            print('err')
+            return render_template('signup.html')
 
         user = User(nickname=nickname, email=email, password=password)
         db.session.add(user)
         db.session.commit()
-        return request
+        return redirect('/start')
     else:
         return render_template('signup.html')
 

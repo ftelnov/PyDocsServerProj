@@ -1,16 +1,22 @@
 {% extends "default.html" %}
-
 {% block header %}
-<div class="container">
-    <section class="pt-4 pb-5 error-page-main-inner">
-        <form method="post" class="text-center ml-5 mt-md-5 mr-5 inner-section-padding ">
-            <input type="text" class="form-control mt-md-2 " name="nickname" placeholder="Type nickname here..">
-            <input type="email" class="form-control mt-md-2" name="email" placeholder="Type nickname here..">
-            <input type="password" class="form-control mt-md-2" name="password" placeholder="Type password here..">
-            <input type="password" class="form-control mt-md-2" name="password_submit" placeholder="Submit password..">
-            <button type="submit" class="btn btn-primary btn-lg icofont icofont-ui-home">Sign Up</button>
-        </form>
-    </section>
-</div>
+<section class="pt-4 pb-5 error-page-main-inner mt-md-5 ml-5 mr-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 col-lg-5 mx-auto text-center section-title">
+                <form method="post">
+                    <input type="text" class="form-control text-primary" name="nickname" placeholder="Type nickname here..">
+                    <input type="email" class="form-control mt-md-3 text-primary" name="email" placeholder="Type email here..">
+                    <input type="password" class="form-control mt-md-3 text-primary" name="password"
+                           placeholder="Type password here..">
+                    <input type="password" class="form-control mt-md-3 text-primary" name="password_submit"
+                           placeholder="Submit password..">
+                    <input type="submit" class="mt-md-4 btn btn-primary btn-lg icofont icofont-ui-home"
+                           name="sign-up" value="Sign Up">
+                </form>
+            </div>
+        </div>
 
+    </div>
+</section>
 {% endblock %}
