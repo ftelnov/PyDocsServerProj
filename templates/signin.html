@@ -8,6 +8,7 @@
                     <input type="text" class="form-control text-primary" name="nickname" placeholder="Type nickname here..">
                     <input type="password" class="form-control mt-md-3 text-primary" name="password"
                            placeholder="Type password here.." autocomplete="current-password">
+                    {{ response|safe }}
                     <input type="submit" class="mt-md-4 btn btn-primary btn-lg icofont icofont-ui-home"
                            name="sign-in" value="Sign In">
                 </form>

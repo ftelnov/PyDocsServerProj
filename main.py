@@ -73,7 +73,10 @@ def signin():
             session['nickname'] = nickname
             return redirect('/profile')
         else:
-            return redirect('/404')
+            alert = '''<div class="alert alert-danger text-left mt-md-2 pd-1" role="alert">
+                    This user does not exist!
+                    </div>'''
+            return render_template('signin.html', response=alert)
 
 
 @app.route('/signup', methods=['POST', 'GET'])
