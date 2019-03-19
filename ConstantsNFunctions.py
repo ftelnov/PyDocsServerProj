@@ -38,7 +38,7 @@ class User(DB.Model):
     nickname = DB.Column(DB.String(120), unique=True, nullable=False)
     password = DB.Column(DB.String(120), nullable=False)
     email = DB.Column(DB.String(120), unique=True, nullable=False)
-    level = DB.Column(DB.String(120), default='NewBie')
+    level = DB.Column(DB.String(120), default='Turtle')
     experience = DB.Column(DB.Integer, default=0)
 
     def __repr__(self):

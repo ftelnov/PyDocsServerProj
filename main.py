@@ -107,6 +107,16 @@ def signup():
         return render_template('signup.html')
 
 
+@APP.route('/user/<nickname>', methods=['GET'])
+def get_user(nickname):
+    user = DB.session.query(User.id, User.experience, User.nickname, User.level, User.email).filter_by(
+        nickname=nickname).first()
+    print(user)
+    if not user:
+        return render_template('not-fount.html')
+    return render_template('user.html', nickname=nickname, exp=user[1], level=user[3])
+
+
 if __name__ == '__main__':
     DB.create_all()
     APP.run(port=8080, host='127.0.0.1')
