@@ -79,16 +79,34 @@ def signin():
 @app.route('/signup', methods=['POST', 'GET'])
 def signup():
     if request.method == 'POST':
+        # получили все поля, в которые пользователь ввел какие-либо данные
         nickname = request.form.get('nickname')
         email = request.form.get('email')
         password = request.form.get('password')
         password_submit = request.form.get('password_submit')
+
+        # прописал все условия в разных строчках, чтобы не загромождать код
         conditional_1 = db.session.query(User.id).filter_by(nickname=nickname).scalar()
         conditional_2 = password != password_submit
         conditional_3 = db.session.query(User.id).filter_by(email=email).scalar()
-        if conditional_1 or conditional_2 or conditional_3:
-            print('err')
-            return render_template('signup.html')
+
+        conditionals = []  # записываем все условия в массив строк
+        if conditional_1:
+            conditionals.append('<li> User with that nickname already exist! </li>')
+        if conditional_2:
+            conditionals.append('<li> Passwords do not match! </li>')
+        if conditional_3:
+            conditionals.append('<li> User with that email already exist! </li>')
+
+        # если что-либо пошло не так, возвращаемся на туже страничку, но уже с вписанной ошибкой
+        response = '''
+        <div class="alert alert-danger text-left mt-md-5 pd-1" role="alert">
+                <ul>
+                     {conditionals}
+                </ul>
+        </div>'''.format(conditionals=' '.join(conditionals))
+        if conditionals:
+            return render_template('signup.html', response=response)
 
         user = User(nickname=nickname, email=email, password=password)
         db.session.add(user)

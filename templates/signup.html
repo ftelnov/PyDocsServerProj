@@ -5,16 +5,22 @@
         <div class="row">
             <div class="col-md-12 col-lg-5 mx-auto text-center section-title">
                 <form method="post">
-                    <input type="text" class="form-control text-primary" name="nickname" placeholder="Type nickname here..">
-                    <input type="email" class="form-control mt-md-3 text-primary" name="email" placeholder="Type email here..">
+                    <input type="text" class="form-control text-primary" name="nickname"
+                           placeholder="Type nickname here.." minlength="6" maxlength="10" required>
+                    <input type="email" class="form-control mt-md-3 text-primary" name="email"
+                           placeholder="Type email here.." required>
                     <input type="password" class="form-control mt-md-3 text-primary" name="password"
-                           placeholder="Type password here..">
+                           placeholder="Type password here.." minlength="8" required
+                           pattern="^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?!.*\s).*$">
                     <input type="password" class="form-control mt-md-3 text-primary" name="password_submit"
-                           placeholder="Submit password..">
+                           placeholder="Confirm password.." minlength="8" required
+                           pattern="^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?!.*\s).*$">
+                    {{ response|safe}}
                     <input type="submit" class="mt-md-4 btn btn-primary btn-lg icofont icofont-ui-home"
                            name="sign-up" value="Sign Up">
                 </form>
-                <h6 class="text-white mt-md-4"> Have an account already? <a href="/signin" class="text-warning"><u>Sign In</u></a></h6>
+                <h6 class="text-white mt-md-4"> Have an account already? <a href="/signin" class="text-warning"><u>Sign
+                    In</u></a></h6>
             </div>
         </div>
 
