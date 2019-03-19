@@ -16,7 +16,7 @@ def error_404(error):
     return render_template('not-found.html')
 
 
-@APP.route('/profile', methods=['GET', 'POST'])
+@APP.route('/profile', methods=['GET', 'POST', 'DELETE'])
 def profile():
     if request.method == 'GET':
         if session.get('signin'):
@@ -34,9 +34,15 @@ def profile():
             return redirect('/signin')
 
     elif request.method == 'POST':
-        session['signin'] = 0
-        session['nickname'] = None
-        return redirect('/signin')
+        if request.form.get('delete-account'):
+            if session['signin'] == 1:
+                User.query.filter_by(nickname=session['nickname']).delete()
+                DB.session.commit()
+            return redirect('/signin')
+        elif request.form.get('sign-out'):
+            session['signin'] = 0
+            session['nickname'] = None
+            return redirect('/signin')
 
 
 @APP.route('/signin', methods=['POST', 'GET'])
@@ -73,11 +79,11 @@ def signup():
 
         conditionals = []  # записываем все условия в массив строк
         if conditional_1:
-            conditionals.append('<li> User with that nickname already exist! </li>')
+            conditionals.append('<li> Такого никнейм уже занят! </li>')
         if conditional_2:
-            conditionals.append('<li> Passwords do not match! </li>')
+            conditionals.append('<li> Пароли не совпадают! </li>')
         if conditional_3:
-            conditionals.append('<li> User with that email already exist! </li>')
+            conditionals.append('<li> Почта уже привязана к другому аккаунту! </li>')
 
         # если что-либо пошло не так, возвращаемся на туже страничку, но уже с вписанной ошибкой
         response = '''

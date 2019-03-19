@@ -4,16 +4,21 @@
     <div class="container">
         <div class="row">
             <div class="col-md-12 col-lg-5 mx-auto text-center section-title">
-                <h1 class="text-white">Hello, {{ nickname }}</h1>
-                <h2 class="text-warning mt-5">Your EXP: {{ exp }}</h2>
-                <h2 class="text-warning">Your Level: {{ level }}</h2>
-                <h2 class="text-warning">Your Personal ID: {{ id }}</h2>
+                <h1 class="text-white"><nobr>Welcome, {{ nickname }}!</nobr></h1>
+                <h2 class="text-warning mt-5"> Your EXP: {{ exp }} </h2>
+                <h2 class="text-warning"> Your level: {{ level }} </h2>
+                <h2 class="text-warning"> Your Personal ID: {{ id }} </h2>
                 <form method="post">
-                        <input type="submit" class="btn btn-primary btn-lg icofont icofont-ui-home mt-md-5"
-                               name="sign-out" value="Sign Out">
+                    <input type="submit" class="btn btn-primary btn-sm icofont icofont-ui-home mt-md-2"
+                           name="sign-out" value="Log Out">
+                    <input type="submit" class="btn btn-primary btn-sm icofont icofont-ui-home mt-md-2"
+                           name="delete-account" value="Delete account">
                 </form>
             </div>
+
+
         </div>
+
 
     </div>
 </section>

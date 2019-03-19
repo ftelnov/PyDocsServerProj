@@ -54,5 +54,6 @@ def give_exp(nickname, exp):
     for level in LEVELS:
         if LEVELS[level][0] <= pre_experience <= LEVELS[level][1]:
             DB.session.query.filter_by(nickname=nickname).update({'level': level, 'experience': pre_experience})
+            DB.session.commit()
             return True
     return False
