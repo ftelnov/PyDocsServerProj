@@ -21,15 +21,15 @@ def profile():
     if request.method == 'GET':
         if session.get('signin'):
             # получили пользователя, отфильтровав базу данных
-            user = DB.session.query(User.id, User.experience, User.nickname, User.level, User.email).filter_by(
+            user = DB.session.query(User.id, User.experience, User.nickname, User.level, User.email, User.profile_image).filter_by(
                 nickname=session.get('nickname')).first()
             identification = user[0]
             exp = user[1]
             nickname = user[2]
             level = user[3]
             email = user[4]
-
-            return render_template('profile.html', nickname=nickname, exp=exp, level=level, id=identification)
+            profile_image = user[5]
+            return render_template('profile.html', nickname=nickname, exp=exp, level=level, id=identification, image_file=profile_image)
         else:
             return redirect('/signin')
 
@@ -43,6 +43,7 @@ def profile():
             session['signin'] = 0
             session['nickname'] = None
             return redirect('/signin')
+
 
 
 @APP.route('/signin', methods=['POST', 'GET'])

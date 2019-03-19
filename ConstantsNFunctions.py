@@ -40,6 +40,7 @@ class User(DB.Model):
     email = DB.Column(DB.String(120), unique=True, nullable=False)
     level = DB.Column(DB.String(120), default='Turtle')
     experience = DB.Column(DB.Integer, default=0)
+    profile_image = DB.Column(DB.String(120), default='static/img/user/1.jpg')
 
     def __repr__(self):
         return '<User id={} nickname={} email={} level={} exp={}>'.format(
