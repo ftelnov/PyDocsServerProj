@@ -1,10 +1,12 @@
-from flask import render_template, Flask, redirect, request, make_response
+from flask import render_template, Flask, redirect, request, make_response, session
 from flask_sqlalchemy import SQLAlchemy
 from datetime import timedelta, datetime
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///main_database.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.secret_key = 'anthrone'
+app.config['SESSION_TYPE'] = 'filesystem'
 db = SQLAlchemy(app)
 
 
@@ -37,12 +39,25 @@ def error_404(error):
     return render_template('not-found.html')
 
 
-@app.route('/profile', methods=['GET'])
+@app.route('/profile', methods=['GET', 'POST'])
 def profile():
-    print(request.cookies.get('signin'))
-    if request.cookies.get('signin'):
-        return redirect('/start')
-    else:
+    if request.method == 'GET':
+        if session.get('signin'):
+            # получили пользователя, отфильтровав базу данных
+            user = db.session.query(User.id, User.experience, User.nickname, User.level, User.email).filter_by(
+                nickname=session.get('nickname')).first()
+            identification = user[0]
+            exp = user[1]
+            nickname = user[2]
+            level = user[3]
+            email = user[4]
+            return render_template('profile.html', nickname=nickname, exp=exp, level=level, id=identification)
+        else:
+            return redirect('/signin')
+
+    elif request.method == 'POST':
+        session['signin'] = 0
+        session['nickname'] = None
         return redirect('/signin')
 
 
@@ -54,13 +69,9 @@ def signin():
         nickname = request.form.get('nickname')
         password = request.form.get('password')
         if db.session.query(User.id).filter_by(nickname=nickname, password=password).scalar():
-            resp = make_response('/start')
-            resp.set_cookie('signin', '1',
-                                expires=datetime.now() + timedelta(days=30))
-            resp.set_cookie('nickname', nickname,
-                            expires=datetime.now() + timedelta(days=30))
-            resp.set_cookie('nickname', nickname)
-            return redirect('/start')
+            session['signin'] = 1
+            session['nickname'] = nickname
+            return redirect('/profile')
         else:
             return redirect('/404')
 
@@ -74,14 +85,19 @@ def signup():
         password_submit = request.form.get('password_submit')
         conditional_1 = db.session.query(User.id).filter_by(nickname=nickname).scalar()
         conditional_2 = password != password_submit
-        if conditional_1 or conditional_2:
+        conditional_3 = db.session.query(User.id).filter_by(email=email).scalar()
+        if conditional_1 or conditional_2 or conditional_3:
             print('err')
             return render_template('signup.html')
 
         user = User(nickname=nickname, email=email, password=password)
         db.session.add(user)
         db.session.commit()
-        return redirect('/start')
+
+        session['nickname'] = nickname
+        session['signin'] = 1
+
+        return redirect('/profile')
     elif request.method == 'GET':
         return render_template('signup.html')
 
