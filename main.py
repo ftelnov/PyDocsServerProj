@@ -1,6 +1,7 @@
 import os
 
 from flask import url_for
+from shutil import copyfileobj
 from werkzeug.utils import secure_filename
 
 from ConstantsNFunctions import *
@@ -26,15 +27,15 @@ def profile():
     if request.method == 'GET':
         if session.get('signin'):
             # получили пользователя, отфильтровав базу данных
-            user = DB.session.query(User.id, User.experience, User.nickname, User.level, User.email,
-                                    User.profile_image).filter_by(
+            user = DB.session.query(User).filter_by(
                 nickname=session.get('nickname')).first()
-            identification = user[0]
-            exp = user[1]
-            nickname = user[2]
-            level = user[3]
-            email = user[4]
-            profile_image = user[5]
+            identification = user.id
+            exp = user.experience
+            nickname = user.nickname
+            level = user.level
+            email = user.email
+            profile_image = user.profile_image
+
             return render_template('profile.html', nickname=nickname, exp=exp, level=level, id=identification,
                                    image_file=profile_image)
         else:
@@ -43,28 +44,37 @@ def profile():
     elif request.method == 'POST':
         if request.form.get('delete-account'):
             if session['signin'] == 1:
-                User.query.filter_by(nickname=session['nickname']).delete()
+                user = User.query.filter_by(nickname=session['nickname'])
+                os.remove(user.profile_image)
+                user.delete()
                 DB.session.commit()
             return redirect('/signin')
+
         elif request.form.get('sign-out'):
             session['signin'] = 0
             session['nickname'] = None
             return redirect('/signin')
-        else:
-            if 'file' not in request.files:
-                return redirect(request.url)
-            file = request.files['file']
 
-            if file.filename == '':
-                return redirect(request.url)
+        elif request.form.get('save-uploaded-image'):
+            if 'image' not in request.files:
+                return redirect('/profile')
 
-            if file and ALLOWED_EXTENSIONS(file.filename):
-                filename = secure_filename(file.filename)
-                user = DB.session.query().filter_by(nickname=session.get('nickname')).first()
-                user.profile_image = os.path.join(APP.config['UPLOAD_FOLDER'], filename)
-                file.save(os.path.join(APP.config['UPLOAD_FOLDER'], filename))
-                return redirect(url_for('uploaded_file',
-                                        filename=filename))
+            file = request.files['image']
+            extension = file.filename.split('.')[-1]
+
+            if file and extension in ALLOWED_EXTENSIONS:
+                user = DB.session.query(User).filter_by(nickname=session.get('nickname'))
+                folder = APP.config['UPLOAD_FOLDER'] + '/images/' + user.first().nickname + '-profile-image.' + extension
+
+                if user.first().profile_image != 'static/img/user/1.jpg':
+                    os.remove(user.first().profile_image)
+                user.update({'profile_image': folder})
+                DB.session.commit()
+
+                with open(folder, 'wb+') as file_copy:
+                    copyfileobj(file, file_copy)
+
+            return redirect('/profile')
 
 
 @APP.route('/signin', methods=['POST', 'GET'])
@@ -131,7 +141,8 @@ def signup():
 
 @APP.route('/user/<nickname>', methods=['GET'])
 def get_user(nickname):
-    user = DB.session.query(User.id, User.experience, User.nickname, User.level, User.email, User.profile_image).filter_by(
+    user = DB.session.query(User.id, User.experience, User.nickname, User.level, User.email,
+                            User.profile_image).filter_by(
         nickname=nickname).first()
     if not user:
         return render_template('not-fount.html')

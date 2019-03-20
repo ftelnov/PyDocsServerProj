@@ -4,14 +4,15 @@
     <div class="container">
         <div class="row">
             <div class="col-md-12 col-lg-5 mx-auto text-center section-title">
-                <form method="post">
+                <form method="post" enctype="multipart/form-data">
                     <div class="image-upload">
                         <label for="file-input">
-                            <img src="../{{image_file}}"/>
+                            <img src="../{{image_file}}">
                         </label>
-
-                        <input id="file-input" type="file"/>
+                        <input id="file-input" type="file" name="image">
                     </div>
+                    <input type="submit" class="btn btn-danger btn-sm icofont icofont-ui-home mt-md-2"
+                           name="save-uploaded-image" value="Save photo">
                 </form>
                 <h1 class="text-white mt-2">
                     <nobr>Welcome, {{ nickname }}!</nobr>

@@ -1,7 +1,7 @@
 from flask import render_template, Flask, redirect, request, make_response, session, flash
 from flask_sqlalchemy import SQLAlchemy
 
-UPLOAD_FOLDER = '/users_uploads'
+UPLOAD_FOLDER = 'static/users_uploads'
 ALLOWED_EXTENSIONS = {'pdf', 'png', 'jpg', 'jpeg', 'gif'}
 
 SECRET_KEY = 'anthrone'
@@ -24,6 +24,7 @@ APP.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URI
 APP.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = TRACK_MODIFICATIONS
 APP.config['SESSION_TYPE'] = SESSION_TYPE
 APP.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+APP.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
 
 # устанавливаем секретку
 APP.secret_key = SECRET_KEY
