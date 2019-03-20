@@ -4,12 +4,18 @@
     <div class="container">
         <div class="row">
             <div class="col-md-12 col-lg-5 mx-auto text-center section-title">
-                <img src="{{image_file}}" width="200" height="200" style="border-radius: 50%;">
                 <form method="post">
-                    <input type="file" class="btn btn-outline-warning btn-lg icofont icofont-ui-home mt-md-2"
-                           name="upload-photo" value="Update photo">
+                    <div class="image-upload">
+                        <label for="file-input">
+                            <img src="../{{image_file}}"/>
+                        </label>
+
+                        <input id="file-input" type="file"/>
+                    </div>
                 </form>
-                <h1 class="text-white mt-2"><nobr>Welcome, {{ nickname }}!</nobr></h1>
+                <h1 class="text-white mt-2">
+                    <nobr>Welcome, {{ nickname }}!</nobr>
+                </h1>
                 <h2 class="text-warning mt-5"> Your EXP: {{ exp }} </h2>
                 <h2 class="text-warning"> Your level: {{ level }} </h2>
                 <h2 class="text-warning"> Your Personal ID: {{ id }} </h2>

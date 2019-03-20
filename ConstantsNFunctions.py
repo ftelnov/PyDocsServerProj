@@ -2,7 +2,7 @@ from flask import render_template, Flask, redirect, request, make_response, sess
 from flask_sqlalchemy import SQLAlchemy
 
 UPLOAD_FOLDER = '/users_uploads'
-ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
+ALLOWED_EXTENSIONS = {'pdf', 'png', 'jpg', 'jpeg', 'gif'}
 
 SECRET_KEY = 'anthrone'
 DATABASE_URI = 'sqlite:///main_database.db'

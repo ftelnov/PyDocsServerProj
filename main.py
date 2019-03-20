@@ -1,3 +1,8 @@
+import os
+
+from flask import url_for
+from werkzeug.utils import secure_filename
+
 from ConstantsNFunctions import *
 
 
@@ -45,6 +50,21 @@ def profile():
             session['signin'] = 0
             session['nickname'] = None
             return redirect('/signin')
+        else:
+            if 'file' not in request.files:
+                return redirect(request.url)
+            file = request.files['file']
+
+            if file.filename == '':
+                return redirect(request.url)
+
+            if file and ALLOWED_EXTENSIONS(file.filename):
+                filename = secure_filename(file.filename)
+                user = DB.session.query().filter_by(nickname=session.get('nickname')).first()
+                user.profile_image = os.path.join(APP.config['UPLOAD_FOLDER'], filename)
+                file.save(os.path.join(APP.config['UPLOAD_FOLDER'], filename))
+                return redirect(url_for('uploaded_file',
+                                        filename=filename))
 
 
 @APP.route('/signin', methods=['POST', 'GET'])
