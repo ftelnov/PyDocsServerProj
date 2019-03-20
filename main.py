@@ -35,9 +35,10 @@ def profile():
             level = user.level
             email = user.email
             profile_image = user.profile_image
+            min_exp, max_exp = LEVELS[level]
 
             return render_template('profile.html', nickname=nickname, exp=exp, level=level, id=identification,
-                                   image_file=profile_image)
+                                   image_file=profile_image, exp_min=min_exp, exp_max=max_exp)
         else:
             return redirect('/signin')
 
@@ -64,7 +65,8 @@ def profile():
 
             if file and extension in ALLOWED_EXTENSIONS:
                 user = DB.session.query(User).filter_by(nickname=session.get('nickname'))
-                folder = APP.config['UPLOAD_FOLDER'] + '/images/' + user.first().nickname + '-profile-image.' + extension
+                folder = APP.config[
+                             'UPLOAD_FOLDER'] + '/images/' + user.first().nickname + '-profile-image.' + extension
 
                 if user.first().profile_image != 'static/img/user/1.jpg':
                     os.remove(user.first().profile_image)
