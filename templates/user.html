@@ -4,10 +4,18 @@
     <div class="container">
         <div class="row">
             <div class="col-md-12 col-lg-5 mx-auto text-center section-title">
-                <img src="../{{image_file}}" width="200" height="200" style="border-radius: 50%;">
-                <h1 class="text-white mt-2"><nobr>Nickname: {{ nickname }}</nobr></h1>
-                <h2 class="text-warning mt-5"> EXP: {{ exp }} </h2>
-                <h2 class="text-warning"> Level: {{ level }} </h2>
+                <div class="card">
+                    <img src="../{{image_file}}" style="border-radius: 50%" width="200" height="200" class="mx-auto">
+
+                    <div class="card-body">
+                        <h2 class="card-title">{{nickname}}</h2>
+                        <span class="section-title-line"></span>
+                        <p class="card-text">
+                        <div class="progress">
+                            <div class="progress-bar bg-warning" role="progressbar" style="width: {{exp}}%"></div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

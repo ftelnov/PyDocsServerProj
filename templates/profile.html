@@ -4,7 +4,6 @@
     <div class="container">
         <div class="row">
             <div class="col-md-12 col-lg-5 mx-auto text-center section-title">
-
                 <div class="card">
 
                     <form method="post" enctype="multipart/form-data">
@@ -23,10 +22,8 @@
                         <span class="section-title-line"></span>
                         <p class="card-text">
                         <div class="progress">
-                            <div class="progress-bar bg-warning" role="progressbar"
-                                 aria-valuenow="{{exp}}" aria-valuemin="{{exp_min}}" aria-valuemax="{{exp_max}}"></div>
+                            <div class="progress-bar bg-warning" role="progressbar" style="width: {{exp}}%"></div>
                         </div>
-                        <span class="section-title-line"></span>
                         <form method="post">
                             <input type="submit" class="btn btn-primary btn-sm icofont icofont-ui-home mt-md-2"
                                    name="sign-out" value="Log Out">

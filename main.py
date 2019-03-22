@@ -36,9 +36,12 @@ def profile():
             email = user.email
             profile_image = user.profile_image
             min_exp, max_exp = LEVELS[level]
+            max_exp -= min_exp
+            exp -= min_exp
+            exp = exp / max_exp * 100
 
             return render_template('profile.html', nickname=nickname, exp=exp, level=level, id=identification,
-                                   image_file=profile_image, exp_min=min_exp, exp_max=max_exp)
+                                   image_file=profile_image)
         else:
             return redirect('/signin')
 
@@ -143,12 +146,17 @@ def signup():
 
 @APP.route('/user/<nickname>', methods=['GET'])
 def get_user(nickname):
-    user = DB.session.query(User.id, User.experience, User.nickname, User.level, User.email,
-                            User.profile_image).filter_by(
+    user = DB.session.query(User).filter_by(
         nickname=nickname).first()
     if not user:
         return render_template('not-fount.html')
-    return render_template('user.html', nickname=nickname, exp=user[1], level=user[3], image_file=user[-1])
+    exp = user.experience
+    min_exp, max_exp = LEVELS[user.level]
+    max_exp -= min_exp
+    exp -= min_exp
+    exp = exp / max_exp * 100
+    return render_template('user.html', nickname=nickname, exp=exp, level=user.level,
+                           image_file=user.profile_image)
 
 
 if __name__ == '__main__':
