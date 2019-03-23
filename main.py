@@ -214,8 +214,19 @@ def get_user(nickname):
                            image_file=user.profile_image)
 
 
+# страничка статьи
+@APP.route('/article/<identification>', methods=['GET', 'POST'])
+def get_article(identification):
+    # если метод-гет
+    if request.method == 'GET':
+        # получаем статью фильтром
+        article = DB.session.query(Article).filter_by(id=identification).first()
+        # отрисовываем
+        return render_template('article.html', title=article.title)
+
+
 # Далее идут REST-обработчики
-# обрабатываем получение информации о пользователе/ях
+# обрабатываем получение информации о пользовател(е/ях)
 @APP.route('/api/user/get', methods=['POST'])
 def get_user_information():
     # парсим параметры POST-запроса
@@ -237,6 +248,25 @@ def get_user_information():
     # возвращаем json-схему пользователей
     return jsonify(user_to_dict(users))
 
+
+# обрабатываем получение информации о статьи/статьях
+@APP.route('/api/article/get', methods=['GET'])
+def get_article():
+    # парсим параметры POST-запроса
+    parser = reqparse.RequestParser()
+    # парсим id статьи и кол-во статей
+    parser.add_argument('ids', required=True)
+    parser.add_argument('count', required=True)
+    args = parser.parse_args()
+    # если не были подгружены id и count
+    if not args.ids or not args.count:
+        return jsonify({'error': 'Invalid article ID!'})
+    # получаем статьи
+    articles = DB.session.query(Article).filter(Article.nickname.in_(args.ids.split(';'))).all()
+    if not articles:
+        return jsonify({'error': 'There are no such articles!'})
+    articles = articles[:int(args.count)]
+    return jsonify(article_to_dict(articles))
 
 if __name__ == '__main__':
     DB.create_all()

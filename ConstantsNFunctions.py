@@ -51,6 +51,16 @@ class User(DB.Model):
             self.id, self.nickname, self.email, self.level, self.experience, self.profile_image)
 
 
+# класс статьи
+class Article(DB.Model):
+    id = DB.Column(DB.Integer, primary_key=True)  # уникальный идентификатор статьи
+    author = DB.Column(DB.String(120), primary_key=True, nullable=False)  # никнейм автора статьи
+    likes = DB.Column(DB.Integer, default=0)  # кол-во лайков статьи
+    comments = DB.Column(DB.Text, nullable=False)  # комменты статьи
+    title = DB.Column(DB.String(120))  # заголовок статьи
+    text = DB.Column(DB.Text)  # текст статьи
+
+
 # функция выдачи опыта игроку
 def give_exp(nickname, exp):
     # получаем пользователя из базы данных
@@ -85,5 +95,21 @@ def user_to_dict(users):
             'level': user.level,  # уровень
             'id': user.id,  # персональный идентификатор
             'email': user.email  # почта пользователя
+        })
+    return result
+
+
+# функция трансформации статьи из базы данных в словарь
+def article_to_dict(articles):
+    result = []  # результирующий список статей
+    for article in articles:
+        # проходимся по статьям, добавляем их в резалт
+        result.append({
+            'id': article.id,
+            'author': article.author,
+            'likes': article.id,
+            'comments': article.comments,
+            'title': article.title,
+            'text': article.text
         })
     return result
