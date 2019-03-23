@@ -6,3 +6,9 @@ Method api/user/get:
     - user data will place in body as json
     # example in python using requests:
         requests.post('http://127.0.0.1:8080/api/user/get', data={'nicknames': ['feofan'], 'count': 1})
+Method api/article/get:
+    - use it to get article-information by ids
+    - you should send post-request with ids and count(less than 500) in body
+    - article data will place in body as json
+    # example in python using requests:
+        requests.post('http://127.0.0.1:8080/api/article/get', data={'ids': [1, 2], 'count': 1})
