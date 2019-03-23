@@ -10,6 +10,9 @@ DATABASE_URI = 'sqlite:///main_database.db'  # Uri бдшки
 TRACK_MODIFICATIONS = 'sqlite:///main_database.db'
 SESSION_TYPE = 'filesystem'
 
+HOST = '127.0.0.1'  # хост коннекта на сервер
+PORT = 8080  # порт коннекта на сервер
+
 # всевозможные уровни игры с минимальным и максимальным кол-вом опыта в них
 LEVELS = {
     'Turtle': (0, 100),
@@ -18,6 +21,8 @@ LEVELS = {
     'Basilisk': (301, 400),
     'Python': (401, 500),
 }
+
+STANDARD_IMAGE = 'static/img/user/1.jpg'  # стандартное изображение для профиля пользователя
 
 APP = Flask(__name__)
 # настраиваем конфиги
@@ -59,6 +64,9 @@ class Article(DB.Model):
     comments = DB.Column(DB.Text, nullable=False)  # комменты статьи
     title = DB.Column(DB.String(120))  # заголовок статьи
     text = DB.Column(DB.Text)  # текст статьи
+    create_day = DB.Column(DB.Integer)  # день создания статьи
+    create_month = DB.Column(DB.String(20))  # месяц создания статьи
+    create_year = DB.Column(DB.Integer)  # год создания статьи
 
 
 # функция выдачи опыта игроку
@@ -110,6 +118,9 @@ def article_to_dict(articles):
             'likes': article.id,
             'comments': article.comments,
             'title': article.title,
-            'text': article.text
+            'text': article.text,
+            'create-day': article.create_day,
+            'create-month': article.create_month,
+            'create-year': article.create_year
         })
     return result

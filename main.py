@@ -2,6 +2,7 @@ import os
 
 from shutil import copyfileobj
 from werkzeug.utils import secure_filename
+from requests import post
 
 from ConstantsNFunctions import *
 
@@ -98,7 +99,7 @@ def profile():
                 folder = APP.config[
                              'UPLOAD_FOLDER'] + '/images/' + user.first().nickname + '-profile-image.' + extension
                 # если изображение пользователя не стандартное
-                if user.first().profile_image != 'static/img/user/1.jpg':
+                if user.first().profile_image != STANDARD_IMAGE:
                     # удаляем его предидущее изображение
                     os.remove(user.first().profile_image)
                 # обновляем изображение пользователя
@@ -225,6 +226,14 @@ def get_article(identification):
         return render_template('article.html', title=article.title)
 
 
+# страничка форума
+@APP.route('/forum', methods=['GET'])
+def forum():
+    result = post('/api/user/get', data={'offset': 1, 'count': 1}).json()
+    print(result)
+    return render_template('forum.html', articles=result)
+
+
 # Далее идут REST-обработчики
 # обрабатываем получение информации о пользовател(е/ях)
 @APP.route('/api/user/get', methods=['POST'])
@@ -251,23 +260,25 @@ def get_user_information():
 
 # обрабатываем получение информации о статьи/статьях
 @APP.route('/api/article/get', methods=['GET'])
-def get_article():
+def get_article_info():
     # парсим параметры POST-запроса
     parser = reqparse.RequestParser()
     # парсим id статьи и кол-во статей
-    parser.add_argument('ids', required=True)
     parser.add_argument('count', required=True)
+    parser.add_argument('offset', required=True)
     args = parser.parse_args()
-    # если не были подгружены id и count
-    if not args.ids or not args.count:
-        return jsonify({'error': 'Invalid article ID!'})
+    # если не были подгружены offset и count
+    if not args.count and not args.offset:
+        return jsonify({'error': 'Invalid article Count or Offset!'})
+    lis = args.ids.split(';')
     # получаем статьи
-    articles = DB.session.query(Article).filter(Article.nickname.in_(args.ids.split(';'))).all()
+    articles = DB.session.query(Article).filter(args.offset <= Article.id <= args.count + args.offset).all()
     if not articles:
         return jsonify({'error': 'There are no such articles!'})
-    articles = articles[:int(args.count)]
+    # по смещению
     return jsonify(article_to_dict(articles))
+
 
 if __name__ == '__main__':
     DB.create_all()
-    APP.run(port=8080, host='127.0.0.1')
+    APP.run(port=PORT, host=HOST)
