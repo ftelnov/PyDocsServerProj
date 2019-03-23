@@ -1,6 +1,6 @@
 My Server Project - PyDocs
 For DEVELOPMENTS:
-Method api/get:
+Method api/user/get:
     - use it to get user-information by nicknames/personal_ids
     - you should send post-request with nicknames/personal_ids and count(less than 500) in body
     - user data will place in body as json
