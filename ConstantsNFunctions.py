@@ -45,10 +45,10 @@ class User(DB.Model):
     experience = DB.Column(DB.Integer, default=0)  # текущее кол-во опыта пользователя
     profile_image = DB.Column(DB.String(120), default='static/img/user/1.jpg')  # путь к аве пользователя
 
-
-def __repr__(self):
-    return '<User id={} nickname={} email={} level={} exp={}>'.format(
-        self.id, self.nickname, self.email, self.level, self.experience)
+    # перегружаем строковое представления для удобного вывода
+    def __repr__(self):
+        return '<User id={} nickname={} email={} level={} exp={} profile_image={}>'.format(
+            self.id, self.nickname, self.email, self.level, self.experience, self.profile_image)
 
 
 # функция выдачи опыта игроку
@@ -76,8 +76,9 @@ def give_exp(nickname, exp):
 
 # функция трансформации пользователя из базы данных в словарь
 def user_to_dict(users):
-    result = []
+    result = []  # результирующий список юзеров
     for user in users:
+        # проходимся по юзерам, добавляем их в резалт
         result.append({
             'nickname': user.nickname,  # никнейм
             'experience': user.experience,  # опыт
