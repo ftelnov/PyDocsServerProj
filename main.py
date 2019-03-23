@@ -215,20 +215,27 @@ def get_user(nickname):
 
 
 # Далее идут REST-обработчики
-# обрабатываем получение информации о пользователе
+# обрабатываем получение информации о пользователе/ях
 @APP.route('/api/user/get', methods=['POST'])
 def get_user_information():
     # парсим параметры POST-запроса
     parser = reqparse.RequestParser()
     # парсим никнэйм пользователя
-    parser.add_argument('nickname', required=True)
-    # вытаскиваем информацию о нем из базы данных
-    user = DB.session.query(User).filter_by(nickname=parser.parse_args().nickname).first()
+    parser.add_argument('nicknames', required=True)
+    parser.add_argument('count', required=True)
+    args = parser.parse_args()
+    # если один из параметров отсутствует, выводим сообщение об ошибках
+    if not args.nicknames or not args.count:
+        return jsonify({'error': 'Offset or nicknames is empty!'})
+    # вытаскиваем информацию о пользователях из базы данных
+    users = DB.session.query(User).filter(User.nickname.in_(args.nicknames.split(';'))).all()
+    if not users:
+        return jsonify({'error': 'There are no such users!'})
+    users = users[:int(args.count)]
     # если ничего не нашли, возвращаем соответствующий код
-    if not user:
-        return jsonify({'code': 404})
-    # возвращаем json-схему пользователя
-    return jsonify(user_to_dict(user))
+
+    # возвращаем json-схему пользователей
+    return jsonify(user_to_dict(users))
 
 
 if __name__ == '__main__':
