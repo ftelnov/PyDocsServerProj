@@ -1,1 +1,8 @@
 My Server Project - PyDocs
+For DEVELOPMENTS:
+Method api/get:
+    - use it to get user-information by nickname/personal_id
+    - you should send post-request with nickname/personal_id in body
+    - user data will place in body as json
+    # example in python using requests:
+        requests.post('http://127.0.0.1:8080/api/user/get', data={'nickname': 'feofan'})

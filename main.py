@@ -193,31 +193,37 @@ def signup():
         return render_template('signup.html')
 
 
+# страничка пользователя для гостей
 @APP.route('/user/<nickname>', methods=['GET'])
 def get_user(nickname):
+    # получаем пользователя, отфильтровав базу данных
     user = DB.session.query(User).filter_by(
         nickname=nickname).first()
+    # если пользователь не найден, выводим сообщение об ошибке
     if not user:
         return render_template('not-fount.html')
+    # получаем опыт пользователя
     exp = user.experience
+    # вычисляем опыт для вывода в прогресс-бар
     min_exp, max_exp = LEVELS[user.level]
     max_exp -= min_exp
     exp -= min_exp
     exp = exp / max_exp * 100
+    # отрисовываем окно пользователя
     return render_template('user.html', nickname=nickname, exp=exp, level=user.level,
                            image_file=user.profile_image)
 
 
 # Далее идут REST-обработчики
 # обрабатываем получение информации о пользователе
-@APP.route('/user/get_information', methods=['POST'])
+@APP.route('/api/user/get', methods=['POST'])
 def get_user_information():
     # парсим параметры POST-запроса
     parser = reqparse.RequestParser()
     # парсим никнэйм пользователя
     parser.add_argument('nickname', required=True)
     # вытаскиваем информацию о нем из базы данных
-    user = DB.session.query(User).filter_by(nickname=parser.parse_args('nickname')).first()
+    user = DB.session.query(User).filter_by(nickname=parser.parse_args().nickname).first()
     # если ничего не нашли, возвращаем соответствующий код
     if not user:
         return jsonify({'code': 404})

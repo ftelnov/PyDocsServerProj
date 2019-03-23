@@ -77,9 +77,9 @@ def give_exp(nickname, exp):
 # функция трансформации пользователя из базы данных в словарь
 def user_to_dict(user):
     return {
-        user['nickname']: user.nickname,  # никнейм
-        user['experience']: user.experience,  # опыт
-        user['level']: user.level,  # уровень
-        user['id']: user.id,  # персональный идентификатор
-        user['email']: user.email  # почта пользователя
+        'nickname': user.nickname,  # никнейм
+        'experience': user.experience,  # опыт
+        'level': user.level,  # уровень
+        'id': user.id,  # персональный идентификатор
+        'email': user.email  # почта пользователя
     }
