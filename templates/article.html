@@ -1,21 +1,25 @@
 {% extends "default.html" %}
 {% block header %}
-<section class="pt-4 pb-5 error-page-main-inner mt-md-5 ml-5 mr-5">
+<div class="section blog-image">
+    <img class="img-fluid wf" src="../{{article['article-image']}}" alt="">
+</div>
+<section class="section pb-4 pt-0 success-story-block">
+    <img class="bg-body-top-bg" style="bottom: auto; top: 140px;" src="../static/img/bg-body-top.png" alt="">
     <div class="container">
         <div class="row">
-            <div class="col-md-12 col-lg-5 mx-auto text-center section-title">
-                <div class="card theme-card blog-card">
-                    <a href="#"><img class="card-img-top" src="../static/img/stories/1.png" alt="Card image cap"></a>
-                    <div class="card-body">
-                        <span class="badge badge-success">DESIGN</span>
-                        <h6><a class="text-gray underlining-none" href="#">System Security Testing</a></h6>
-                        <p>The purpose of analysis is to distill complexity into actionable insights only "insights" too
-                            often take the form of graphs</p>
-                        <div class="blog-author">
-                            <p><img class="rounded-circle" src="../static/img/user/1.jpg" alt="Card image cap"> <strong>Rahul
-                                Yadav</strong> On October 03, 2017</p>
+            <div class="col-md-10 mx-auto">
+                <div class="blog-dediated-block">
+                    <div class="blog-status">
+                        <div class="blog-date text-center">
+                            <strong>{{article['create-month']}}, {{article['create-day']}}</strong><br>{{article['create-year']}}
+                        </div>
+                        <div class="blog-time text-center">
+                            <img src="../static/img/clock.png" alt="Card image cap"><br>
+                            <strong>{{article['read-time']}} min</strong>
                         </div>
                     </div>
+                    <h2>{{article['title']}}</h2>
+                    <p class="caption-text">{{article['text']}}</p>
                 </div>
             </div>
         </div>

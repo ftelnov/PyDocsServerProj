@@ -53,7 +53,7 @@ def profile():
 
             # отрисовываем окно пользователю
             return render_template('profile.html', nickname=nickname, exp=exp, level=level, id=identification,
-                                   image_file=profile_image)
+                                   image_file=profile_image, exp_point=user.experience)
         else:
             return redirect('/signin')
 
@@ -213,7 +213,7 @@ def get_user(nickname):
     exp = exp / max_exp * 100
     # отрисовываем окно пользователя
     return render_template('user.html', nickname=nickname, exp=exp, level=user.level,
-                           image_file=user.profile_image)
+                           image_file=user.profile_image, exp_point=user.experience)
 
 
 # страничка статьи
@@ -222,9 +222,9 @@ def get_article(identification):
     # если метод-гет
     if request.method == 'GET':
         # получаем статью фильтром
-        article = DB.session.query(Article).filter_by(id=identification).first()
+        article = [DB.session.query(Article).filter_by(id=identification).first()]
         # отрисовываем
-        return render_template('article.html', title=article.title)
+        return render_template('article.html', article=article_to_dict(article)[0])
 
 
 # страничка форума
@@ -267,6 +267,7 @@ def write_article():
                 article.article_image = folder
         else:
             article.article_image = STANDARD_IMAGE
+        give_exp(session.get('nickname'), 1)
         DB.session.add(article)
         DB.session.commit()
         return redirect('/forum')

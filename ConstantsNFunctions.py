@@ -92,9 +92,10 @@ class Article(DB.Model):
 def give_exp(nickname, exp):
     # получаем пользователя из базы данных
     user = DB.session.query(User).filter_by(
-        nickname=nickname).first()
+        nickname=nickname)
     # первичный опыт, т.е. который пользователь имеет в данный момент
-    pre_experience = user.experience
+
+    pre_experience = user.first().experience
     # добавляем опыт
     pre_experience += exp
     # проходимся по уровням, ищем подходящий
