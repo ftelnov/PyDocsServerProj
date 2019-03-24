@@ -229,9 +229,15 @@ def get_article(identification):
 # страничка форума
 @APP.route('/forum', methods=['GET'])
 def forum():
-    result = post('/api/user/get', data={'offset': 1, 'count': 1}).json()
-    print(result)
-    return render_template('forum.html', articles=result)
+    result = post('http://127.0.0.1:8080/api/article/get', data={'offset': 1, 'count': 1}).json()
+    return render_template('forum.html')
+
+
+# страничка создания статьи
+@APP.route('/write-article', methods=['GET', 'POST'])
+def write_article():
+    if request.method == 'GET':
+        return render_template('write-article.html')
 
 
 # Далее идут REST-обработчики
@@ -248,7 +254,7 @@ def get_user_information():
     if not args.nicknames or not args.count:
         return jsonify({'error': 'Offset or nicknames is empty!'})
     # вытаскиваем информацию о пользователях из базы данных
-    users = DB.session.query(User).filter(User.nickname.in_(args.nicknames.split(';'))).all()
+    users = User.query.filter(User.nickname.in_(args.nicknames.split(';'))).all()
     if not users:
         return jsonify({'error': 'There are no such users!'})
     users = users[:int(args.count)]
@@ -259,7 +265,7 @@ def get_user_information():
 
 
 # обрабатываем получение информации о статьи/статьях
-@APP.route('/api/article/get', methods=['GET'])
+@APP.route('/api/article/get', methods=['POST'])
 def get_article_info():
     # парсим параметры POST-запроса
     parser = reqparse.RequestParser()
@@ -270,9 +276,8 @@ def get_article_info():
     # если не были подгружены offset и count
     if not args.count and not args.offset:
         return jsonify({'error': 'Invalid article Count or Offset!'})
-    lis = args.ids.split(';')
     # получаем статьи
-    articles = DB.session.query(Article).filter(args.offset <= Article.id <= args.count + args.offset).all()
+    articles = Article.query.filter(Article.id <= args.count + args.offset, Article.id >= args.offset).all()
     if not articles:
         return jsonify({'error': 'There are no such articles!'})
     # по смещению
