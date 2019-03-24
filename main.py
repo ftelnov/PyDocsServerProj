@@ -231,7 +231,6 @@ def get_article(identification):
 @APP.route('/forum', methods=['GET'])
 def forum():
     result = post('http://127.0.0.1:8080/api/article/get', data={'offset': 0, 'count': 1}).json()
-    print(result)
     if type(result) == list:
         return render_template('forum.html', articles=result)
     else:
@@ -254,6 +253,7 @@ def write_article():
         article = Article(read_time=int(len(text.split(' ')) / 265), title=title, text=text, create_day=day,
                           create_month=month, create_year=year, author=session.get('nickname'),
                           profile_image=profile_image)
+        print(request.files)
         if 'image' in request.files:
             # получаем файл из запроса
             file = request.files['image']
