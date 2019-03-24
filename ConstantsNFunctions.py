@@ -22,6 +22,22 @@ LEVELS = {
     'Python': (401, 500),
 }
 
+# все коды месяцев и их строковые названия
+MONTHS = {
+    1: 'January',
+    2: 'February',
+    3: 'March',
+    4: 'April',
+    5: 'May',
+    6: 'June',
+    7: 'July',
+    8: 'August',
+    9: 'September',
+    10: 'October',
+    11: 'November',
+    12: 'December'
+}
+
 STANDARD_IMAGE = 'static/img/user/1.jpg'  # стандартное изображение для профиля пользователя
 
 APP = Flask(__name__)
@@ -58,15 +74,18 @@ class User(DB.Model):
 
 # класс статьи
 class Article(DB.Model):
-    id = DB.Column(DB.Integer, primary_key=True)  # уникальный идентификатор статьи
-    author = DB.Column(DB.String(120), primary_key=True, nullable=False)  # никнейм автора статьи
+    id = DB.Column(DB.Integer, primary_key=True, autoincrement=True)  # уникальный идентификатор статьи
+    author = DB.Column(DB.String(120), nullable=False)  # никнейм автора статьи
     likes = DB.Column(DB.Integer, default=0)  # кол-во лайков статьи
-    comments = DB.Column(DB.Text, nullable=False)  # комменты статьи
+    comments = DB.Column(DB.Text)  # комменты статьи
     title = DB.Column(DB.String(120))  # заголовок статьи
     text = DB.Column(DB.Text)  # текст статьи
     create_day = DB.Column(DB.Integer)  # день создания статьи
     create_month = DB.Column(DB.String(20))  # месяц создания статьи
     create_year = DB.Column(DB.Integer)  # год создания статьи
+    article_image = DB.Column(DB.String(120))  # изображение статьи
+    profile_image = DB.Column(DB.String(120))  # изображение профиля автора
+    read_time = DB.Column(DB.Integer)  # время прочтения статьи
 
 
 # функция выдачи опыта игроку
@@ -121,6 +140,9 @@ def article_to_dict(articles):
             'text': article.text,
             'create-day': article.create_day,
             'create-month': article.create_month,
-            'create-year': article.create_year
+            'create-year': article.create_year,
+            'read-time': article.read_time,
+            'article-image': article.article_image,
+            'profile-image': article.profile_image,
         })
     return result

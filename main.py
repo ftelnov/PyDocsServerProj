@@ -3,6 +3,7 @@ import os
 from shutil import copyfileobj
 from werkzeug.utils import secure_filename
 from requests import post
+from datetime import datetime
 
 from ConstantsNFunctions import *
 
@@ -229,15 +230,46 @@ def get_article(identification):
 # страничка форума
 @APP.route('/forum', methods=['GET'])
 def forum():
-    result = post('http://127.0.0.1:8080/api/article/get', data={'offset': 1, 'count': 1}).json()
-    return render_template('forum.html')
+    result = post('http://127.0.0.1:8080/api/article/get', data={'offset': 0, 'count': 1}).json()
+    print(result)
+    if type(result) == list:
+        return render_template('forum.html', articles=result)
+    else:
+        return render_template('forum.html')
 
 
 # страничка создания статьи
 @APP.route('/write-article', methods=['GET', 'POST'])
 def write_article():
     if request.method == 'GET':
-        return render_template('write-article.html')
+        if session.get('signin'):
+            return render_template('write-article.html')
+        return redirect('/signin')
+    elif request.method == 'POST':
+        title = request.form.get('title')
+        text = request.form.get('text')
+        date = datetime.now()
+        day, month, year = date.day, MONTHS[date.month][:3], date.year
+        profile_image = DB.session.query(User.profile_image).filter_by(nickname=session.get('nickname')).scalar()
+        article = Article(read_time=int(len(text.split(' ')) / 265), title=title, text=text, create_day=day,
+                          create_month=month, create_year=year, author=session.get('nickname'),
+                          profile_image=profile_image)
+        if 'image' in request.files:
+            # получаем файл из запроса
+            file = request.files['image']
+            # получаем его формат
+            extension = file.filename.split('.')[-1]
+            folder = APP.config['UPLOAD_FOLDER'] + '/articles/' + str(article.id)
+            # если файл существует и формат разрешен сервером
+            if file and extension in ALLOWED_EXTENSIONS:
+                with open(folder, 'wb+') as file_copy:
+                    copyfileobj(file, file_copy)
+                article.article_image = folder
+        else:
+            article.article_image = STANDARD_IMAGE
+        DB.session.add(article)
+        DB.session.commit()
+        return redirect('/forum')
 
 
 # Далее идут REST-обработчики
