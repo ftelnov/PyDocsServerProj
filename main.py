@@ -23,10 +23,16 @@ def default():
     return redirect('/start')
 
 
-# обработчки 404-ошибки
+# обработчик 404-ошибки
 @APP.errorhandler(404)
 def error_404(error):
     return render_template('not-found.html')
+
+
+# обработчик 500-ошибки
+@APP.errorhandler(500)
+def error_500(error):
+    return render_template('505-error.html')
 
 
 # обработчик окна профиля пользователя
@@ -65,11 +71,15 @@ def profile():
         # если была нажата кнопка "Удалить аккаунт/Delete Account"
         if request.form.get('delete-account'):
             # если пользователь залогинен
-            if session['signin'] == 1:
+            if session.get('signin') == 1:
                 # получаем пользователя, отфильтровав данные
                 user = User.query.filter_by(nickname=session['nickname'])
                 # удаляем изображение пользователя из папки
-                os.remove(user.profile_image)
+                try:
+                    # если уже удалена, пассуем
+                    os.remove(user.first().profile_image)
+                except Exception as exc:
+                    pass
                 # удаляем самого пользователя
                 user.delete()
                 # коммитим изменения
