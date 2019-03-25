@@ -243,8 +243,11 @@ def get_article(identification):
 # страничка форума
 @APP.route('/forum', methods=['GET'])
 def forum():
+    # получаем ответ с собственной апишки
     result = post('http://127.0.0.1:8080/api/article/get', data={'offset': 0, 'count': 1}).json()
+    # если не пришло ничего или пришла ошибка, то переходим на форум бещ подгрузки результата
     if type(result) == list:
+        # иначе подгружаем и отрисовываем
         return render_template('forum.html', articles=result)
     else:
         return render_template('forum.html')
@@ -253,20 +256,29 @@ def forum():
 # страничка создания статьи
 @APP.route('/write-article', methods=['GET', 'POST'])
 def write_article():
+    # если метод-гет
     if request.method == 'GET':
+        # если залогинен
         if session.get('signin'):
+            # переходим на написание статьи
             return render_template('write-article.html')
+        # иначе на страничку входа
         return redirect('/signin')
+    # если метод-пост
     elif request.method == 'POST':
+        # получаем данные с полей ввода
         title = request.form.get('title')
         text = request.form.get('text')
+        # получаем текущее время и дату
         date = datetime.now()
         day, month, year = date.day, MONTHS[date.month][:3], date.year
+        # получаем изображение профиля юзера
         profile_image = DB.session.query(User.profile_image).filter_by(nickname=session.get('nickname')).scalar()
+        # заводим новую статью
         article = Article(read_time=int(len(text.split(' ')) / 265), title=title, text=text, create_day=day,
                           create_month=month, create_year=year, author=session.get('nickname'),
                           profile_image=profile_image)
-        print(request.files)
+        # если изображение было подгружено в файлы
         if 'image' in request.files:
             # получаем файл из запроса
             file = request.files['image']
@@ -279,10 +291,15 @@ def write_article():
                     copyfileobj(file, file_copy)
                 article.article_image = folder
         else:
+            # устанавливаем стандартное изображение
             article.article_image = STANDARD_IMAGE
-        give_exp(session.get('nickname'), 1)
+        # выдаем опыт пользователю за статью(15 опыта)
+        give_exp(session.get('nickname'), 15)
+        # добавляем в базу данных
         DB.session.add(article)
+        # коммитим изменения
         DB.session.commit()
+        # переходим на форум
         return redirect('/forum')
 
 
