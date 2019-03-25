@@ -1,7 +1,6 @@
-from flask import render_template, Flask, redirect, request, make_response, session, flash, jsonify
-from flask_restful import reqparse, Api
+from flask import Flask
+from flask_restful import Api
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import desc
 
 UPLOAD_FOLDER = 'static/users_uploads'  # директория подгрузки изображений пользователей
 ALLOWED_EXTENSIONS = {'pdf', 'png', 'jpg', 'jpeg', 'gif'}  # доступные форматы подгрузки
