@@ -1,7 +1,6 @@
 import os
-
 from shutil import copyfileobj
-from werkzeug.utils import secure_filename
+
 from requests import post
 from datetime import datetime
 
@@ -275,16 +274,22 @@ def write_article():
         # получаем изображение профиля юзера
         profile_image = DB.session.query(User.profile_image).filter_by(nickname=session.get('nickname')).scalar()
         # заводим новую статью
-        article = Article(read_time=int(len(text.split(' ')) / 265), title=title, text=text, create_day=day,
+        article = Article(read_time=int(len(text.split(' ')) / 265 + 1), title=title, text=text, create_day=day,
                           create_month=month, create_year=year, author=session.get('nickname'),
                           profile_image=profile_image)
+        # выдаем опыт пользователю за статью(15 опыта)
+        give_exp(session.get('nickname'), 15)
+        # добавляем в базу данных
+        DB.session.add(article)
+        # коммитим изменения
+        DB.session.commit()
         # если изображение было подгружено в файлы
         if 'image' in request.files:
             # получаем файл из запроса
             file = request.files['image']
             # получаем его формат
             extension = file.filename.split('.')[-1]
-            folder = APP.config['UPLOAD_FOLDER'] + '/articles/' + str(article.id)
+            folder = APP.config['UPLOAD_FOLDER'] + '/articles/' + str(article.id) + '.' + extension
             # если файл существует и формат разрешен сервером
             if file and extension in ALLOWED_EXTENSIONS:
                 with open(folder, 'wb+') as file_copy:
@@ -293,11 +298,7 @@ def write_article():
         else:
             # устанавливаем стандартное изображение
             article.article_image = STANDARD_IMAGE
-        # выдаем опыт пользователю за статью(15 опыта)
-        give_exp(session.get('nickname'), 15)
-        # добавляем в базу данных
-        DB.session.add(article)
-        # коммитим изменения
+        # коммитим
         DB.session.commit()
         # переходим на форум
         return redirect('/forum')
