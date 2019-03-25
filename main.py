@@ -115,6 +115,19 @@ def profile():
             return redirect('/profile')
 
 
+# топ пользователей
+@APP.route('/top', methods=['GET'])
+def top():
+    users = DB.session.query(User).order_by(desc(User.experience)).limit(20).all()  # отфильтровали список пользователей
+    result = []  # результирующий список
+    it = 1  # итератор для подсчета
+    for user in users:
+        temp = '<a href="user/{nickname}"<strong>{it}. </strong> {nickname} - {level}({exp} exp.)<br>'  # промежуточная
+        result.append(temp.format(it=it, nickname=user.nickname, level=user.level, exp=user.experience))  # обновляем
+        it += 1  # инкрементим
+    return render_template('top.html', users=''.join(result))  # отрисовываем
+
+
 # обработчик входа в приложение
 @APP.route('/signin', methods=['POST', 'GET'])
 def signin():
