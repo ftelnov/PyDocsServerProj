@@ -93,6 +93,22 @@ class Article(DB.Model):
     read_time = DB.Column(DB.Integer)  # время прочтения статьи
 
 
+# класс лайков
+class Like(DB.Model):
+    peer_id = DB.Column(DB.Integer, nullable=False)  # идентификатор назначения
+    author = DB.Column(DB.String(120), nullable=False)  # никнейм автора лайка(отправителя)
+
+
+# класс комментария
+class Comment(DB.Model):
+    peer_id = DB.Column(DB.Integer, nullable=False)  # идентификатор назначения
+    author = DB.Column(DB.String(120), nullable=False)  # никнейм автора лайка(отправителя)
+    text = DB.Column(DB.Text)  # текст комментария
+    create_day = DB.Column(DB.Integer)  # день создания комментария
+    create_month = DB.Column(DB.String(20))  # месяц создания комментария
+    create_year = DB.Column(DB.Integer)  # год создания комментария
+
+
 # функция выдачи опыта игроку
 def give_exp(nickname, exp):
     # получаем пользователя из базы данных
