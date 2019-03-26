@@ -401,6 +401,59 @@ def get_comment():
     return jsonify(comments_to_dict(comments))
 
 
+# обрабатываем установку лайка по идентификатору назначения
+@APP.route('/api/like/set', methods=['POST'])
+def set_like():
+    # парсим параметры POST-запроса
+    parser = reqparse.RequestParser()
+    # парсим id назначения, автора, пароль
+    parser.add_argument('peer_id', required=True)
+    parser.add_argument('author', required=True)
+    parser.add_argument('password', required=True)
+    args = parser.parse_args()
+    # если не был подгружен peer_id
+    if not args.peer_id:
+        return jsonify({'result': 'Invalid peer_id!'})
+    # если пользователя не существует
+    if not args.author or not args.password or not User.query.filter(nickname=args.author,
+                                                                     password=args.password).first():
+        return jsonify({'result': 'Invalid author!'})
+    if Like.query.filter(peer_id=args.peer_id, author=args.author):
+        return jsonify({'result': 'Like already placed!'})
+    like = Like(args.peer_id, args.author)
+    DB.session.add(like)
+    DB.session.commit()
+    return jsonify({'result': 'Success'})
+
+
+# обрабатываем установку комментария по идентификатору назначения
+@APP.route('/api/comment/set', methods=['POST'])
+def set_comment():
+    # парсим параметры POST-запроса
+    parser = reqparse.RequestParser()
+    # парсим id назначения, автора, пароль, текст комментария
+    parser.add_argument('peer_id', required=True)
+    parser.add_argument('author', required=True)
+    parser.add_argument('password', required=True)
+    parser.add_argument('text', required=True)
+    # парсим
+    args = parser.parse_args()
+    # если отсутствует один из параметров
+    if not args.peer_id or not args.author or not args.password or args.text:
+        return jsonify({'result': 'One of required param lost!'})
+    # если пользователь не существует
+    if not User.query.filter(nickname=args.author, password=args.password).first():
+        return jsonify({'result': 'Invalid author!'})
+    # получаем текущую дату
+    date = datetime.now()
+    # получаем день, месяц, год
+    day, month, year = date.day, MONTHS[date.month][:3], date.year
+    comment = Comment(args.peer_id, args.author, args.text, day, month, year)
+    DB.session.add(comment)
+    DB.session.commit()
+    return jsonify({'result': 'Success'})
+
+
 if __name__ == '__main__':
     DB.create_all()
     APP.run(port=PORT, host=HOST)
