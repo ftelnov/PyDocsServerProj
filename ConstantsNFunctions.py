@@ -81,8 +81,6 @@ class User(DB.Model):
 class Article(DB.Model):
     id = DB.Column(DB.Integer, primary_key=True, autoincrement=True)  # уникальный идентификатор статьи
     author = DB.Column(DB.String(120), nullable=False)  # никнейм автора статьи
-    likes = DB.Column(DB.Integer, default=0)  # кол-во лайков статьи
-    comments = DB.Column(DB.Text)  # комменты статьи
     title = DB.Column(DB.String(120))  # заголовок статьи
     text = DB.Column(DB.Text)  # текст статьи
     create_day = DB.Column(DB.Integer)  # день создания статьи
@@ -167,4 +165,13 @@ def article_to_dict(articles):
             'article-image': article.article_image,
             'profile-image': article.profile_image,
         })
+    return result
+
+
+# функция трансформации лайков из базы данных в словарь
+def likes_to_dict(likes):
+    result = []  # результирующий список лайков
+    for like in likes:
+        # проходимся по лайкам, добавляем их в резалт
+        result.append({'peer_id': like.peer_id, 'author': like.author})
     return result

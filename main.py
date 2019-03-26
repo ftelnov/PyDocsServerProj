@@ -312,6 +312,7 @@ def write_article():
         else:
             # устанавливаем стандартное изображение
             article.article_image = STANDARD_IMAGE
+            article.id = int('2000000' + str(article.id))
         # коммитим
         DB.session.commit()
         # переходим на форум
@@ -360,6 +361,25 @@ def get_article_info():
         return jsonify({'error': 'There are no such articles!'})
     # по смещению
     return jsonify(article_to_dict(articles))
+
+
+# обрабатываем получение лайков по идентификатору назначения
+@APP.route('/api/like/get', methods=['POST'])
+def get_like():
+    # парсим параметры POST-запроса
+    parser = reqparse.RequestParser()
+    # парсим id назначения
+    parser.add_argument('peer_id', required=True)
+    args = parser.parse_args()
+    # если не были подгружены offset и count
+    if not args.peer_id:
+        return jsonify({'error': 'Invalid peer_id!'})
+    # получаем все лайки по назначению
+    likes = Like.query.filter(Like.peer_id.in_(args.peer_id)).all()
+    if not likes:
+        return jsonify({'likes': 'null'})
+    # по смещению
+    return jsonify(likes_to_dict(likes))
 
 
 if __name__ == '__main__':
