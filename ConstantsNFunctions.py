@@ -175,3 +175,19 @@ def likes_to_dict(likes):
         # проходимся по лайкам, добавляем их в резалт
         result.append({'peer_id': like.peer_id, 'author': like.author})
     return result
+
+
+# функция трансформации комментариев из базы данных в словарь
+def comments_to_dict(comments):
+    result = []  # результирующий список комментариев
+    for comment in comments:
+        # проходимся по комментам, добавляем их в результат
+        result.append({
+            'peer_id': comment.peer_id,
+            'author': comment.author,
+            'create_day': comment.create_day,
+            'create_month': comment.create_month,
+            'create_year': comment.create_year,
+            'text': comment.text,
+        })
+    return result

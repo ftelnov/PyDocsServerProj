@@ -371,15 +371,34 @@ def get_like():
     # парсим id назначения
     parser.add_argument('peer_id', required=True)
     args = parser.parse_args()
-    # если не были подгружены offset и count
+    # если не был подгружен peer_id
     if not args.peer_id:
         return jsonify({'error': 'Invalid peer_id!'})
     # получаем все лайки по назначению
     likes = Like.query.filter(Like.peer_id.in_(args.peer_id)).all()
     if not likes:
-        return jsonify({'likes': 'null'})
+        return jsonify({'error': 'There are no such likes!'})
     # по смещению
     return jsonify(likes_to_dict(likes))
+
+
+# обрабатываем получение комментариев по идентификатору назначения
+@APP.route('/api/comment/get', methods=['POST'])
+def get_comment():
+    # парсим параметры POST-запроса
+    parser = reqparse.RequestParser()
+    # парсим id назначения
+    parser.add_argument('peer_id', required=True)
+    args = parser.parse_args()
+    # если не был подгружен peer_id
+    if not args.peer_id:
+        return jsonify({'error': 'Invalid peer_id!'})
+    # получаем все комментарии по назначению
+    comments = Comment.query.filter(Comment.peer_id.in_(args.peer_id)).all()
+    if not comments:
+        return jsonify({'error': 'There are no such comments!'})
+    # по смещению
+    return jsonify(comments_to_dict(comments))
 
 
 if __name__ == '__main__':
