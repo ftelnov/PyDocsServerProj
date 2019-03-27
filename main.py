@@ -256,12 +256,15 @@ def get_article(identification):
 # страничка форума
 @APP.route('/forum', methods=['GET'])
 def forum():
+    if not session.get('signin'):
+        return redirect('/signin')
     # получаем ответ с собственной апишки
     result = post('http://127.0.0.1:8080/api/article/get', data={'offset': 0, 'count': 1}).json()
     # если не пришло ничего или пришла ошибка, то переходим на форум бещ подгрузки результата
     if type(result) == list:
         # иначе подгружаем и отрисовываем
-        return render_template('forum.html', articles=result)
+        return render_template('forum.html', articles=result, login=session.get('nickname'),
+                               password=User.query.filter_by(nickname=session.get('nickname')).first().password)
     else:
         return render_template('forum.html')
 
@@ -450,6 +453,31 @@ def set_comment():
     day, month, year = date.day, MONTHS[date.month][:3], date.year
     comment = Comment(args.peer_id, args.author, args.text, day, month, year)
     DB.session.add(comment)
+    DB.session.commit()
+    return jsonify({'result': 'Success'})
+
+
+# обрабатываем удаление лайка по идентификатору назначения
+@APP.route('/api/like/remove', methods=['POST'])
+def remove_like():
+    # парсим параметры POST-запроса
+    parser = reqparse.RequestParser()
+    # парсим id назначения, автора, пароль
+    parser.add_argument('peer_id', required=True)
+    parser.add_argument('author', required=True)
+    parser.add_argument('password', required=True)
+    args = parser.parse_args()
+    # если не был подгружен peer_id
+    if not args.peer_id:
+        return jsonify({'result': 'Invalid peer_id!'})
+    # если пользователя не существует
+    if not args.author or not args.password or not User.query.filter(nickname=args.author,
+                                                                     password=args.password).first():
+        return jsonify({'result': 'Invalid author!'})
+    like = Like.query.filter(peer_id=args.peer_id, author=args.author)
+    if not like:
+        return jsonify({'result': 'Like already removed!'})
+    like.delete()
     DB.session.commit()
     return jsonify({'result': 'Success'})
 

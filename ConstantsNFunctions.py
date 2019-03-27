@@ -157,7 +157,6 @@ def article_to_dict(articles):
             'id': article.id,
             'author': article.author,
             'likes': article.id,
-            'comments': article.comments,
             'title': article.title,
             'text': article.text,
             'create-day': article.create_day,
