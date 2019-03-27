@@ -93,12 +93,14 @@ class Article(DB.Model):
 
 # класс лайков
 class Like(DB.Model):
+    num = DB.Column(DB.Integer, primary_key=True, autoincrement=True)  # порядковый номер
     peer_id = DB.Column(DB.Integer, nullable=False)  # идентификатор назначения
     author = DB.Column(DB.String(120), nullable=False)  # никнейм автора лайка(отправителя)
 
 
 # класс комментария
 class Comment(DB.Model):
+    num = DB.Column(DB.Integer, primary_key=True, autoincrement=True)  # порядковый номер
     peer_id = DB.Column(DB.Integer, nullable=False)  # идентификатор назначения
     author = DB.Column(DB.String(120), nullable=False)  # никнейм автора лайка(отправителя)
     text = DB.Column(DB.Text)  # текст комментария
