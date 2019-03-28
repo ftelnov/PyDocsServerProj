@@ -36,7 +36,7 @@ def error_500(error):
 
 
 # обработчик окна профиля пользователя
-@APP.route('/profile', methods=['GET'])
+@APP.route('/profile', methods=['GET', 'POST'])
 def profile():
     # обработчик метода get
     if request.method == 'GET':
@@ -91,6 +91,7 @@ def profile():
 
         # если была нажата кнопка "Выйти/Sign Out"
         elif request.form.get('sign-out'):
+
             session['signin'] = 0  # помечаем, что не залогинен
             session['nickname'] = None  # удаляем никнейм из настроек браузера
             return redirect('/signin')  # редиректим пользователя на страничку входа
@@ -293,7 +294,7 @@ def forum():
         return redirect('/signin')
     # получаем ответ с собственной апишки
     result = post('http://127.0.0.1:8080/api/article/get', data={'offset': 0, 'count': 30}).json()
-    likes = [peer_id for peer_id, in DB.session.query(Like.peer_id)]
+    likes = [peer_id for peer_id, in DB.session.query(Like.peer_id).filter_by(author=session.get('nickname'))]
     # если не пришло ничего или пришла ошибка, то переходим на форум бещ подгрузки результата
     if type(result) == list:
         # иначе подгружаем и отрисовываем
@@ -430,7 +431,7 @@ def get_comment():
     if not args.peer_id:
         return jsonify({'result': 'Invalid peer_id!'})
     # получаем все комментарии по назначению
-    comments = Comment.query.filter(Comment.peer_id.in_(args.peer_id)).all()
+    comments = Comment.query.filter(Comment.peer_id.in_([args.peer_id])).all()
     if not comments:
         return jsonify({'result': 'There are no such comments!'})
     # по смещению
@@ -491,17 +492,20 @@ def remove_like():
     # создаем объект лайка
     like = Like.query.filter_by(peer_id=args.peer_id, author=args.author)
     # если лайка не существует
+    count = len(Like.query.filter_by(peer_id=args.peer_id).all())
     if not like:
         # возвращаем, что он удален
-        return jsonify({'result': 'Like already removed!'})
+        return jsonify({'result': 'Like already removed!', 'count': count})
     # если же существует, удаляем
     like.delete()
+    peer = DB.session.query(Article).filter_by(id=args.peer_id).first()
+    peer.likes_count -= 1
     # подтверждаем изменения
     DB.session.commit()
     # выдаем опыт
     give_exp(args.author, -2)
     # возвращаем успешное выполнение
-    return jsonify({'result': 'Success!', 'count': len(Like.query.filter_by(peer_id=args.peer_id).all())})
+    return jsonify({'result': 'Success!', 'count': count})
 
 
 # обрабатываем установку лайка по идентификатору назначения
@@ -522,19 +526,22 @@ def set_like():
     # если пользователя не существует
     if not args.author or not User.query.filter_by(nickname=args.author).first():
         return jsonify({'result': 'Invalid author!'})
+    count = len(Like.query.filter_by(peer_id=args.peer_id).all())
     # если лайк уже установлен
     if Like.query.filter_by(peer_id=args.peer_id, author=args.author).first():
-        return jsonify({'result': 'Like already placed!'})
+        return jsonify({'result': 'Like already placed!', 'count': count})
     # если ничего из вышеперечисленного, заводим объект лайка
     like = Like(peer_id=args.peer_id, author=args.author)
     # добавляем лайк в базу данных
     DB.session.add(like)
+    peer = DB.session.query(Article).filter_by(id=args.peer_id).first()
+    peer.likes_count += 1
     # подтверждаем изменения
     DB.session.commit()
     # выдаем опыт
     give_exp(args.author, 2)
     # возвраща успешное выполнение
-    return jsonify({'result': 'Success!', 'count': len(Like.query.filter_by(peer_id=args.peer_id).all())})
+    return jsonify({'result': 'Success!', 'count': count})
 
 
 # если не импортируем этот файл

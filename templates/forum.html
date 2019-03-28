@@ -23,14 +23,25 @@
                             <p><img class="rounded-circle" src="../{{ article['profile-image'] }}">
                                 <a href="/user/{{article['author']}}"><strong>{{article['author']}}</strong></a>
                                 On {{article['create-month']}} {{article['create-day']}}, {{article['create-year']}}
+                            <div class="row" id="{{article['id']}};{{nickname}}" onclick={like(this)} style="cursor: pointer;" onload="like(this)">
                                 {% if article['id'] in likes %}
-                                    <img src="../static/img/like.png" id="{{article['id']}}" name="{{nickname}}"  onclick={like(this)} style="cursor: pointer;">
+                                <img id="{{article['id']}};{{nickname}};img" src="../static/img/like.png" style="display: inline; float: left;">
+                                <div class="text-danger h4" id="{{article['id']}};{{nickname}};text" style="display: inline; float: left;">
+                                    {% if article['likes_count'] != 0 %}
+                                    {{article['likes_count']}}
+                                    {% endif %}
+                                </div>
                                 {% else %}
-                                    <img src="../static/img/non-like.png" id="{{article['id']}}" name="{{nickname}}"  onclick={like(this)} style="cursor: pointer;">
+                                <img id="{{article['id']}};{{nickname}};img" src="../static/img/non-like.png" style="display: inline; float: left;">
+                                <div class="text-capitalize h4" id="{{article['id']}};{{nickname}};text" style="display: inline; float: left;">
+                                    {% if article['likes_count'] != 0 %}
+                                    {{article['likes_count']}}
+                                    {% endif %}
+                                </div>
                                 {% endif %}
 
+                            </div>
                             </p>
-
                         </div>
                     </div>
                 </div>

@@ -85,6 +85,7 @@ class Article(DB.Model):
     article_image = DB.Column(DB.String(120))  # изображение статьи
     profile_image = DB.Column(DB.String(120))  # изображение профиля автора
     read_time = DB.Column(DB.Integer)  # время прочтения статьи
+    likes_count = DB.Column(DB.Integer, default=0)  # кол-во лайков статьи
 
 
 # класс лайков
@@ -161,6 +162,7 @@ def article_to_dict(articles):
             'read-time': article.read_time,
             'article-image': article.article_image,
             'profile-image': article.profile_image,
+            'likes_count': article.likes_count
         })
     return result
 
