@@ -222,24 +222,41 @@ def signup():
 
 
 # страничка пользователя для гостей
-@APP.route('/user/<nickname>', methods=['GET'])
+@APP.route('/user/<nickname>', methods=['GET', 'POST'])
 def get_user(nickname):
-    # получаем пользователя, отфильтровав базу данных
-    user = DB.session.query(User).filter_by(
-        nickname=nickname).first()
-    # если пользователь не найден, выводим сообщение об ошибке
-    if not user:
-        return render_template('not-fount.html')
-    # получаем опыт пользователя
-    exp = user.experience
-    # вычисляем опыт для вывода в прогресс-бар
-    min_exp, max_exp = LEVELS[user.level]
-    max_exp -= min_exp
-    exp -= min_exp
-    exp = exp / max_exp * 100
-    # отрисовываем окно пользователя
-    return render_template('user.html', nickname=nickname, exp=exp, level=user.level,
-                           image_file=user.profile_image, exp_point=user.experience)
+    identification = User.query.filter_by(nickname=nickname).first().id
+    if request.method == 'GET':
+        # получаем пользователя, отфильтровав базу данных
+        user = DB.session.query(User).filter_by(
+            nickname=nickname).first()
+        # если пользователь не найден, выводим сообщение об ошибке
+        if not user:
+            return render_template('not-fount.html')
+        # получаем опыт пользователя
+        exp = user.experience
+        # вычисляем опыт для вывода в прогресс-бар
+        min_exp, max_exp = LEVELS[user.level]
+        max_exp -= min_exp
+        exp -= min_exp
+        exp = exp / max_exp * 100
+        comments = post(build_url('/api/comment/get'), data={'peer_id': identification}).json()
+        # отрисовываем, c учетом полученных комментариев
+        if type(comments) == dict and comments.get('result'):
+            return render_template('user.html', nickname=nickname, exp=exp, level=user.level,
+                               image_file=user.profile_image, exp_point=user.experience)
+        return render_template('user.html', nickname=nickname, exp=exp, level=user.level,
+                               image_file=user.profile_image, exp_point=user.experience, comments=comments)
+    elif request.method == 'POST':
+        # получаем данные с полей ввода
+        text = request.form.get('text')
+        # получаем id пользователя
+        result = post(build_url('/api/comment/set'), data={'peer_id': identification,
+                                                           'text': text,
+                                                           'author': session.get('nickname')
+                                                           }).json()
+        # выдаем опыт за комментарий(5)
+        give_exp(session.get('nickname'), 5)
+        return redirect('/user/' + nickname)
 
 
 # страничка статьи
@@ -251,7 +268,6 @@ def get_article(identification):
         article = [DB.session.query(Article).filter_by(id=identification).first()]
         # получаем комментарии
         comments = post(build_url('/api/comment/get'), data={'peer_id': identification}).json()
-        print(comments)
         # отрисовываем, c учетом полученных комментариев
         if type(comments) == dict and comments.get('result'):
             return render_template('article.html', article=article_to_dict(article)[0])
