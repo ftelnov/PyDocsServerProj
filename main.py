@@ -60,9 +60,13 @@ def profile():
             exp -= min_exp
             exp = exp / max_exp * 100
 
-            # отрисовываем окно пользователю
+            comments = post(build_url('/api/comment/get'), data={'peer_id': identification}).json()
+            # отрисовываем, c учетом полученных комментариев
+            if type(comments) == dict and comments.get('result'):
+                return render_template('user.html', nickname=nickname, exp=exp, level=user.level,
+                                       image_file=user.profile_image, exp_point=user.experience)
             return render_template('profile.html', nickname=nickname, exp=exp, level=level, id=identification,
-                                   image_file=profile_image, exp_point=user.experience)
+                                   image_file=profile_image, exp_point=user.experience, comments=comments)
         else:
             return redirect('/signin')
 
