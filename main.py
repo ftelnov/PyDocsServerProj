@@ -243,7 +243,7 @@ def get_user(nickname):
         # отрисовываем, c учетом полученных комментариев
         if type(comments) == dict and comments.get('result'):
             return render_template('user.html', nickname=nickname, exp=exp, level=user.level,
-                               image_file=user.profile_image, exp_point=user.experience)
+                                   image_file=user.profile_image, exp_point=user.experience)
         return render_template('user.html', nickname=nickname, exp=exp, level=user.level,
                                image_file=user.profile_image, exp_point=user.experience, comments=comments)
     elif request.method == 'POST':
@@ -275,10 +275,10 @@ def get_article(identification):
     elif request.method == 'POST':
         # получаем данные с полей ввода
         text = request.form.get('text')
-        result = post(build_url('/api/comment/set'), data={'peer_id': identification,
-                                                           'text': text,
-                                                           'author': session.get('nickname')
-                                                           }).json()
+        post(build_url('/api/comment/set'), data={'peer_id': identification,
+                                                  'text': text,
+                                                  'author': session.get('nickname')
+                                                  }).json()
         # выдаем опыт за комментарий(5)
         give_exp(session.get('nickname'), 5)
         return redirect('/article/' + identification)
@@ -290,7 +290,7 @@ def forum():
     if not session.get('signin'):
         return redirect('/signin')
     # получаем ответ с собственной апишки
-    result = post('http://127.0.0.1:8080/api/article/get', data={'offset': 0, 'count': 1}).json()
+    result = post('http://127.0.0.1:8080/api/article/get', data={'offset': 0, 'count': 30}).json()
     # если не пришло ничего или пришла ошибка, то переходим на форум бещ подгрузки результата
     if type(result) == list:
         # иначе подгружаем и отрисовываем
@@ -346,7 +346,7 @@ def write_article():
         else:
             # устанавливаем стандартное изображение
             article.article_image = STANDARD_IMAGE
-            article.id = int('2000000' + str(article.id))
+        article.id = int('2000000' + str(article.id))
         # коммитим
         DB.session.commit()
         # переходим на форум
@@ -390,7 +390,7 @@ def get_article_info():
     if not args.count and not args.offset:
         return jsonify({'result': 'Invalid article Count or Offset!'})
     # получаем статьи
-    articles = Article.query.filter(Article.id <= args.count + args.offset, Article.id >= args.offset).all()
+    articles = Article.query.order_by(desc(Article.id)).limit(args.count).all()
     if not articles:
         return jsonify({'result': 'There are no such articles!'})
     # по смещению

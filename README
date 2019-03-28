@@ -1,14 +1,39 @@
 My Server Project - PyDocs
 For DEVELOPMENTS:
-Method api/user/get:
-    - use it to get user-information by nicknames/personal_ids
-    - you should send post-request with nicknames/personal_ids and count(less than 500) in body
-    - user data will place in body as json
-    # example in python using requests:
-        requests.post('http://127.0.0.1:8080/api/user/get', data={'nicknames': ['feofan'], 'count': 1})
-Method api/article/get:
-    - use it to get article-information by ids
-    - you should send post-request with offset and count(less than 500) in body
-    - article data will place in body as json
-    # example in python using requests:
-        requests.post('http://127.0.0.1:8080/api/article/get', data={'offset': 1, 'count': 1})
+
+USER:
+    Method api/user/get:
+        - use it to get user-information by nicknames/personal_ids
+        - you should send post-request with nicknames/personal_ids and count(less than 500) in body
+        - user data will place in body as json
+        # example in python using requests:
+            requests.post('http://127.0.0.1:8080/api/user/get', data={'nicknames': ['feofan'], 'count': 1})
+ARTICLE:
+    Method api/article/get:
+        - use it to get article-information by ids
+        - you should send post-request with offset and count(less than 500) in body
+        - article data will place in body as json
+        # example in python using requests:
+            requests.post('http://127.0.0.1:8080/api/article/get', data={'offset': 1, 'count': 1})
+COMMENT:
+    Method api/comment/get:
+        - use it to get all comments by peer-id
+        - you should send post-request with peer_id in body
+        # example in python using requests:
+            requests.post('http://127.0.0.1:8080/api/comment/get', data={'peer_id': 1})
+    Method api/comment/set:
+        - use it to set comment to peer_id
+        - you should send post-request with peer_id, author, text in body
+        # example in python using requests:
+            requests.post('http://127.0.0.1:8080/api/comment/get', data={'peer_id': 1, 'author': 'feofan', 'text': 'Yandex'})
+LIKE:
+    Method api/like/get:
+        - use it to get like count by peer-id
+        - you should send post-request with peer_id in body
+        # example in python using requests:
+            requests.post('http://127.0.0.1:8080/api/like/get', data={'peer_id': 1})
+    Method api/like/set:
+        - use it to set like to peer_id
+        - you should send post-request with peer_id, author in body
+        # example in python using requests:
+            requests.post('http://127.0.0.1:8080/api/like/get', data={'peer_id': 1, 'author': 'feofan'})
