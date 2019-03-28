@@ -72,11 +72,6 @@ class User(DB.Model):
     experience = DB.Column(DB.Integer, default=0)  # текущее кол-во опыта пользователя
     profile_image = DB.Column(DB.String(120), default='static/img/user/1.jpg')  # путь к аве пользователя
 
-    # перегружаем строковое представления для удобного вывода
-    def __repr__(self):
-        return '<User id={} nickname={} email={} level={} exp={} profile_image={}>'.format(
-            self.id, self.nickname, self.email, self.level, self.experience, self.profile_image)
-
 
 # класс статьи
 class Article(DB.Model):
