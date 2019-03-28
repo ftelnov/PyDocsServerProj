@@ -37,3 +37,6 @@ LIKE:
         - you should send post-request with peer_id, author in body
         # example in python using requests:
             requests.post('http://127.0.0.1:8080/api/like/get', data={'peer_id': 1, 'author': 'feofan'})
+PEER_ID:
+    Article: int('2000000' + str(num)), where num - serial number of article
+    User: num, where num - serial number of article
