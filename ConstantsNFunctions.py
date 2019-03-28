@@ -7,8 +7,8 @@ ALLOWED_EXTENSIONS = {'pdf', 'png', 'jpg', 'jpeg', 'gif'}  # доступные 
 
 SECRET_KEY = 'anthrone'  # секретка приложения
 DATABASE_URI = 'sqlite:///main_database.db'  # Uri бдшки
-TRACK_MODIFICATIONS = 'sqlite:///main_database.db'
-SESSION_TYPE = 'filesystem'
+TRACK_MODIFICATIONS = 'sqlite:///main_database.db'  # отслеживание изменений
+SESSION_TYPE = 'filesystem'  #
 
 HOST = '127.0.0.1'  # хост коннекта на сервер
 PORT = 8080  # порт коннекта на сервер
@@ -48,12 +48,12 @@ ADMIN_PASSWORD = 'aethertemplarA1'  # пароль администратора
 
 APP = Flask(__name__)
 # настраиваем конфиги
-APP.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URI
-APP.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = TRACK_MODIFICATIONS
-APP.config['SESSION_TYPE'] = SESSION_TYPE
-APP.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-APP.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
-Api(APP)
+APP.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URI  # ссылка на бд
+APP.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = TRACK_MODIFICATIONS  # отслеживание изменений
+APP.config['SESSION_TYPE'] = SESSION_TYPE  # тип для сеанса
+APP.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER  # директория подгрузки пользовательских изображений
+APP.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0  # максимальная длительность жизни файлов на сервере( для обновления )
+Api(APP)  # инициализируем API к приложению
 
 # устанавливаем секретку
 APP.secret_key = SECRET_KEY

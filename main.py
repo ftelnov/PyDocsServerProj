@@ -32,7 +32,7 @@ def error_404(error):
 # обработчик 500-ошибки
 @APP.errorhandler(500)
 def error_500(error):
-    return render_template('505-error.html')
+    return render_template('500-error.html')
 
 
 # обработчик окна профиля пользователя
@@ -293,8 +293,7 @@ def forum():
         return redirect('/signin')
     # получаем ответ с собственной апишки
     result = post('http://127.0.0.1:8080/api/article/get', data={'offset': 0, 'count': 30}).json()
-    likes = [DB.session.query(Like.peer_id).scalar()]
-    print(likes)
+    likes = [peer_id for peer_id, in DB.session.query(Like.peer_id)]
     # если не пришло ничего или пришла ошибка, то переходим на форум бещ подгрузки результата
     if type(result) == list:
         # иначе подгружаем и отрисовываем
@@ -459,10 +458,14 @@ def set_comment():
     date = datetime.now()
     # получаем день, месяц, год
     day, month, year = date.day, MONTHS[date.month][:3], date.year
+    # заводим коментарий
     comment = Comment(peer_id=args.peer_id, author=args.author, text=args.text, create_day=day, create_month=month,
                       create_year=year)
+    # добавляем его в базу данных
     DB.session.add(comment)
+    # коммитим изменения
     DB.session.commit()
+    # возвращаем результат как успешный
     return jsonify({'result': 'Success'})
 
 
@@ -471,10 +474,12 @@ def set_comment():
 def remove_like():
     # парсим параметры POST-запроса
     parser = reqparse.RequestParser()
-    # парсим id назначения, автора
+    # добавляемв парсер id назначения и автора
     parser.add_argument('peer_id', required=True)
     parser.add_argument('author', required=True)
+    # парсим аргументы
     args = parser.parse_args()
+    # если полученный ник автора и ник в сессии не совпадает, возвращаем соответствующую ошибку
     if args.author != session.get('nickname'):
         return jsonify({'result': 'Author and session account does not match!'})
     # если не был подгружен peer_id
@@ -483,11 +488,19 @@ def remove_like():
     # если пользователя не существует
     if not args.author or not User.query.filter_by(nickname=args.author).first():
         return jsonify({'result': 'Invalid author!'})
+    # создаем объект лайка
     like = Like.query.filter_by(peer_id=args.peer_id, author=args.author)
+    # если лайка не существует
     if not like:
+        # возвращаем, что он удален
         return jsonify({'result': 'Like already removed!'})
+    # если же существует, удаляем
     like.delete()
+    # подтверждаем изменения
     DB.session.commit()
+    # выдаем опыт
+    give_exp(args.author, -2)
+    # возвращаем успешное выполнение
     return jsonify({'result': 'Success!', 'count': len(Like.query.filter_by(peer_id=args.peer_id).all())})
 
 
@@ -500,6 +513,7 @@ def set_like():
     parser.add_argument('peer_id', required=True)
     parser.add_argument('author', required=True)
     args = parser.parse_args()
+    # если никнейм автора не совпадает с никнеймом в сессии
     if args.author != session.get('nickname'):
         return jsonify({'result': 'Author and session account does not match!'})
     # если не был подгружен peer_id
@@ -508,14 +522,22 @@ def set_like():
     # если пользователя не существует
     if not args.author or not User.query.filter_by(nickname=args.author).first():
         return jsonify({'result': 'Invalid author!'})
+    # если лайк уже установлен
     if Like.query.filter_by(peer_id=args.peer_id, author=args.author).first():
         return jsonify({'result': 'Like already placed!'})
+    # если ничего из вышеперечисленного, заводим объект лайка
     like = Like(peer_id=args.peer_id, author=args.author)
+    # добавляем лайк в базу данных
     DB.session.add(like)
+    # подтверждаем изменения
     DB.session.commit()
+    # выдаем опыт
+    give_exp(args.author, 2)
+    # возвраща успешное выполнение
     return jsonify({'result': 'Success!', 'count': len(Like.query.filter_by(peer_id=args.peer_id).all())})
 
 
+# если не импортируем этот файл
 if __name__ == '__main__':
-    DB.create_all()
-    APP.run(port=PORT, host=HOST)
+    DB.create_all()  # инициализируем бдшку
+    APP.run(port=PORT, host=HOST)  # запускаем сервак
