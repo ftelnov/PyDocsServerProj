@@ -1,6 +1,6 @@
-function like(img, peer_id, login, password) {
+function like(img, peer_id, login) {
     var body = 'peer_id=' + encodeURIComponent(peer_id) +
-        '&login=' + encodeURIComponent(login) + '&password=' + encodeURIComponent(password);
+        '&login=' + encodeURIComponent(login);
     const Http = new XMLHttpRequest();
     const url = '/api/like/set';
     Http.open("POST", url, true);

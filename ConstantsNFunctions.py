@@ -44,6 +44,7 @@ MONTHS = {
 }
 
 STANDARD_IMAGE = 'static/img/user/1.jpg'  # стандартное изображение для профиля пользователя
+ADMIN_PASSWORD = 'aethertemplarA1'  # пароль администратора
 
 APP = Flask(__name__)
 # настраиваем конфиги
@@ -192,3 +193,8 @@ def comments_to_dict(comments):
             'text': comment.text,
         })
     return result
+
+
+# функция построения запроса по локальному пути
+def build_url(url):
+    return 'http://' + HOST + ':' + str(PORT) + url

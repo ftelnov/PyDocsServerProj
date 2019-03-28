@@ -19,8 +19,25 @@
                         </div>
                     </div>
                     <h2>{{article['title']}}</h2>
-                    <p class="text-primary" style="word-wrap: break-spaces;">{{article['text']}}</p>
+                    <p class="text-primary" style="word-break: break-all;">{{article['text']}}</p>
                 </div>
+                <form method="post" class="mt-md-5">
+                    <textarea name="text" class="form-control text-primary mt-md-3" rows="5" cols="60"
+                              placeholder="Text.." minlength="10"></textarea>
+                    <input type="submit" class="mt-md-4 btn btn-primary btn-lg icofont icofont-ui-home"
+                           name="sign-in" value="Send">
+                </form>
+                {% for comment in comments %}
+                <div class="blog-dediated-block mt-md-2">
+                    <div class="blog-status">
+                        <div class="blog-date text-center">
+                            <strong>{{comment['create_month']}}, {{comment['create_day']}}</strong><br>{{comment['create_year']}}
+                        </div>
+                    </div>
+                    <h2><a href="/user/{{comment['author']|safe}}">{{comment['author']}}</a></h2>
+                    <p class="text-primary" style="word-break: break-all;">{{comment['text']}}</p>
+                </div>
+                {% endfor %}
             </div>
         </div>
     </div>

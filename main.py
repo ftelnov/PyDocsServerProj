@@ -249,8 +249,23 @@ def get_article(identification):
     if request.method == 'GET':
         # получаем статью фильтром
         article = [DB.session.query(Article).filter_by(id=identification).first()]
-        # отрисовываем
-        return render_template('article.html', article=article_to_dict(article)[0])
+        # получаем комментарии
+        comments = post(build_url('/api/comment/get'), data={'peer_id': identification}).json()
+        print(comments)
+        # отрисовываем, c учетом полученных комментариев
+        if type(comments) == dict and comments.get('result'):
+            return render_template('article.html', article=article_to_dict(article)[0])
+        return render_template('article.html', article=article_to_dict(article)[0], comments=comments)
+    elif request.method == 'POST':
+        # получаем данные с полей ввода
+        text = request.form.get('text')
+        result = post(build_url('/api/comment/set'), data={'peer_id': identification,
+                                                           'text': text,
+                                                           'author': session.get('nickname')
+                                                           }).json()
+        # выдаем опыт за комментарий(5)
+        give_exp(session.get('nickname'), 5)
+        return redirect('/article/' + identification)
 
 
 # страничка форума
@@ -294,8 +309,8 @@ def write_article():
         article = Article(read_time=int(len(text.split(' ')) / 265 + 1), title=title, text=text, create_day=day,
                           create_month=month, create_year=year, author=session.get('nickname'),
                           profile_image=profile_image)
-        # выдаем опыт пользователю за статью(15 опыта)
-        give_exp(session.get('nickname'), 15)
+        # выдаем опыт пользователю за статью(30 опыта)
+        give_exp(session.get('nickname'), 30)
         # добавляем в базу данных
         DB.session.add(article)
         # коммитим изменения
@@ -357,11 +372,11 @@ def get_article_info():
     args = parser.parse_args()
     # если не были подгружены offset и count
     if not args.count and not args.offset:
-        return jsonify({'error': 'Invalid article Count or Offset!'})
+        return jsonify({'result': 'Invalid article Count or Offset!'})
     # получаем статьи
     articles = Article.query.filter(Article.id <= args.count + args.offset, Article.id >= args.offset).all()
     if not articles:
-        return jsonify({'error': 'There are no such articles!'})
+        return jsonify({'result': 'There are no such articles!'})
     # по смещению
     return jsonify(article_to_dict(articles))
 
@@ -376,11 +391,11 @@ def get_like():
     args = parser.parse_args()
     # если не был подгружен peer_id
     if not args.peer_id:
-        return jsonify({'error': 'Invalid peer_id!'})
+        return jsonify({'result': 'Invalid peer_id!'})
     # получаем все лайки по назначению
     likes = Like.query.filter(Like.peer_id.in_(args.peer_id)).all()
     if not likes:
-        return jsonify({'error': 'There are no such likes!'})
+        return jsonify({'result': 'There are no such likes!'})
     # по смещению
     return jsonify(likes_to_dict(likes))
 
@@ -395,11 +410,11 @@ def get_comment():
     args = parser.parse_args()
     # если не был подгружен peer_id
     if not args.peer_id:
-        return jsonify({'error': 'Invalid peer_id!'})
+        return jsonify({'result': 'Invalid peer_id!'})
     # получаем все комментарии по назначению
     comments = Comment.query.filter(Comment.peer_id.in_(args.peer_id)).all()
     if not comments:
-        return jsonify({'error': 'There are no such comments!'})
+        return jsonify({'result': 'There are no such comments!'})
     # по смещению
     return jsonify(comments_to_dict(comments))
 
@@ -412,16 +427,16 @@ def set_like():
     # парсим id назначения, автора, пароль
     parser.add_argument('peer_id', required=True)
     parser.add_argument('author', required=True)
-    parser.add_argument('password', required=True)
     args = parser.parse_args()
+    if args.author != session.get('nickname'):
+        return jsonify({'result': 'Author and session account does not match!'})
     # если не был подгружен peer_id
     if not args.peer_id:
         return jsonify({'result': 'Invalid peer_id!'})
     # если пользователя не существует
-    if not args.author or not args.password or not User.query.filter(nickname=args.author,
-                                                                     password=args.password).first():
+    if not args.author or not args.password or not User.query.filter_by(nickname=args.author).first():
         return jsonify({'result': 'Invalid author!'})
-    if Like.query.filter(peer_id=args.peer_id, author=args.author):
+    if Like.query.filter_by(peer_id=args.peer_id, author=args.author):
         return jsonify({'result': 'Like already placed!'})
     like = Like(args.peer_id, args.author)
     DB.session.add(like)
@@ -434,24 +449,24 @@ def set_like():
 def set_comment():
     # парсим параметры POST-запроса
     parser = reqparse.RequestParser()
-    # парсим id назначения, автора, пароль, текст комментария
+    # парсим id назначения, автора, текст комментария
     parser.add_argument('peer_id', required=True)
     parser.add_argument('author', required=True)
-    parser.add_argument('password', required=True)
     parser.add_argument('text', required=True)
     # парсим
     args = parser.parse_args()
     # если отсутствует один из параметров
-    if not args.peer_id or not args.author or not args.password or args.text:
+    if not args.peer_id or not args.author or not args.text:
         return jsonify({'result': 'One of required param lost!'})
     # если пользователь не существует
-    if not User.query.filter(nickname=args.author, password=args.password).first():
+    if not User.query.filter_by(nickname=args.author).first():
         return jsonify({'result': 'Invalid author!'})
     # получаем текущую дату
     date = datetime.now()
     # получаем день, месяц, год
     day, month, year = date.day, MONTHS[date.month][:3], date.year
-    comment = Comment(args.peer_id, args.author, args.text, day, month, year)
+    comment = Comment(peer_id=args.peer_id, author=args.author, text=args.text, create_day=day, create_month=month,
+                      create_year=year)
     DB.session.add(comment)
     DB.session.commit()
     return jsonify({'result': 'Success'})
@@ -462,19 +477,19 @@ def set_comment():
 def remove_like():
     # парсим параметры POST-запроса
     parser = reqparse.RequestParser()
-    # парсим id назначения, автора, пароль
+    # парсим id назначения, автора
     parser.add_argument('peer_id', required=True)
     parser.add_argument('author', required=True)
-    parser.add_argument('password', required=True)
     args = parser.parse_args()
+    if args.author != session.get('nickname'):
+        return jsonify({'result': 'Author and session account does not match!'})
     # если не был подгружен peer_id
     if not args.peer_id:
         return jsonify({'result': 'Invalid peer_id!'})
     # если пользователя не существует
-    if not args.author or not args.password or not User.query.filter(nickname=args.author,
-                                                                     password=args.password).first():
+    if not args.author or not args.password or not User.query.filter_by(nickname=args.author).first():
         return jsonify({'result': 'Invalid author!'})
-    like = Like.query.filter(peer_id=args.peer_id, author=args.author)
+    like = Like.query.filter_by(peer_id=args.peer_id, author=args.author)
     if not like:
         return jsonify({'result': 'Like already removed!'})
     like.delete()
