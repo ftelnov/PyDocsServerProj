@@ -80,7 +80,7 @@ class User(DB.Model):
 
 # класс статьи
 class Article(DB.Model):
-    id = DB.Column(DB.Integer, primary_key=True, autoincrement=True)  # уникальный идентификатор статьи
+    id = DB.Column(DB.Integer, primary_key=True)  # уникальный идентификатор статьи
     author = DB.Column(DB.String(120), nullable=False)  # никнейм автора статьи
     title = DB.Column(DB.String(120))  # заголовок статьи
     text = DB.Column(DB.Text)  # текст статьи

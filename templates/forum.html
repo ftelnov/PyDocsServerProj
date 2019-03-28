@@ -23,7 +23,7 @@
                             <p><img class="rounded-circle" src="../{{ article['profile-image'] }}">
                                 <a href="/user/{{article['author']}}"><strong>{{article['author']}}</strong></a>
                                 On {{article['create-month']}} {{article['create-day']}}, {{article['create-year']}}
-                                <img src="../static/img/non-like.png"  onclick={like(this, {{article['id']}},  )} style="cursor: pointer;">
+                                <img src="../static/img/non-like.png" id="{{article['id']}}" name="{{nickname}}"  onclick={like(this)} style="cursor: pointer;">
                             </p>
 
                         </div>

@@ -1,21 +1,28 @@
-function like(img, peer_id, login) {
-    var body = 'peer_id=' + encodeURIComponent(peer_id) +
-        '&login=' + encodeURIComponent(login);
-    const Http = new XMLHttpRequest();
+function like(img) {
     const url = '/api/like/set';
-    Http.open("POST", url, true);
-    Http.send(body);
-    Http.onreadystatechange = (e) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", url, true);
+    xhr.setRequestHeader('Content-Type', 'application/json');
+    console.log(img.name, img.id);
+    xhr.onreadystatechange = function () {
         var result = JSON.parse(Http.responseText);
+        console.log(1);
         if ('Like already placed!' === result['result']) {
-            Http.open("POST", '/api/like/remove', true);
-            var body_two = 'peer_id=' + encodeURIComponent(peer_id) +
-                '&login=' + encodeURIComponent(login) + '&password=' + encodeURIComponent(password);
-            Http.send(body);
+            xhr.open("POST", '/api/like/remove', true);
+            xhr.send(JSON.stringify({
+                'author': img.name,
+                'peer_id': img.id
+            }));
             img.src = "../static/img/non-like.png"
         }
-        else if('Success!' === result['result']){
+        else if ('Success!' === result['result']) {
             img.src = "../static/img/like.png"
         }
     }
+
+    xhr.send(JSON.stringify({
+        'author': img.name,
+        'peer_id': img.id
+    }));
+
 }

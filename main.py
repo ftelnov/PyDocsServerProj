@@ -36,7 +36,7 @@ def error_500(error):
 
 
 # обработчик окна профиля пользователя
-@APP.route('/profile', methods=['GET', 'POST'])
+@APP.route('/profile', methods=['GET'])
 def profile():
     # обработчик метода get
     if request.method == 'GET':
@@ -52,9 +52,7 @@ def profile():
             level = user.level  # уровень
             email = user.email  # почта пользователя
             profile_image = user.profile_image  # изображение профиля пользователя
-
             min_exp, max_exp = LEVELS[level]  # максимальное и минимальное кол-во опыта текущего уровня пользователя
-
             # расчитываем опыт и максимальный опыт на основе данных пользователя
             max_exp -= min_exp
             exp -= min_exp
@@ -63,7 +61,7 @@ def profile():
             comments = post(build_url('/api/comment/get'), data={'peer_id': identification}).json()
             # отрисовываем, c учетом полученных комментариев
             if type(comments) == dict and comments.get('result'):
-                return render_template('user.html', nickname=nickname, exp=exp, level=user.level,
+                return render_template('profile.html', nickname=nickname, exp=exp, level=user.level,
                                        image_file=user.profile_image, exp_point=user.experience)
             return render_template('profile.html', nickname=nickname, exp=exp, level=level, id=identification,
                                    image_file=profile_image, exp_point=user.experience, comments=comments)
@@ -298,8 +296,7 @@ def forum():
     # если не пришло ничего или пришла ошибка, то переходим на форум бещ подгрузки результата
     if type(result) == list:
         # иначе подгружаем и отрисовываем
-        return render_template('forum.html', articles=result, login=session.get('nickname'),
-                               password=User.query.filter_by(nickname=session.get('nickname')).first().password)
+        return render_template('forum.html', articles=result, nickname=session.get('nickname'))
     else:
         return render_template('forum.html')
 
@@ -350,7 +347,7 @@ def write_article():
         else:
             # устанавливаем стандартное изображение
             article.article_image = STANDARD_IMAGE
-        article.id = int('2000000' + str(article.id))
+        article.id = int('2000000' + str(article.id).replace('2000000', ''))
         # коммитим
         DB.session.commit()
         # переходим на форум
@@ -439,31 +436,6 @@ def get_comment():
     return jsonify(comments_to_dict(comments))
 
 
-# обрабатываем установку лайка по идентификатору назначения
-@APP.route('/api/like/set', methods=['POST'])
-def set_like():
-    # парсим параметры POST-запроса
-    parser = reqparse.RequestParser()
-    # парсим id назначения, автора, пароль
-    parser.add_argument('peer_id', required=True)
-    parser.add_argument('author', required=True)
-    args = parser.parse_args()
-    if args.author != session.get('nickname'):
-        return jsonify({'result': 'Author and session account does not match!'})
-    # если не был подгружен peer_id
-    if not args.peer_id:
-        return jsonify({'result': 'Invalid peer_id!'})
-    # если пользователя не существует
-    if not args.author or not args.password or not User.query.filter_by(nickname=args.author).first():
-        return jsonify({'result': 'Invalid author!'})
-    if Like.query.filter_by(peer_id=args.peer_id, author=args.author):
-        return jsonify({'result': 'Like already placed!'})
-    like = Like(args.peer_id, args.author)
-    DB.session.add(like)
-    DB.session.commit()
-    return jsonify({'result': 'Success'})
-
-
 # обрабатываем установку комментария по идентификатору назначения
 @APP.route('/api/comment/set', methods=['POST'])
 def set_comment():
@@ -507,12 +479,37 @@ def remove_like():
     if not args.peer_id:
         return jsonify({'result': 'Invalid peer_id!'})
     # если пользователя не существует
-    if not args.author or not args.password or not User.query.filter_by(nickname=args.author).first():
+    if not args.author or not User.query.filter_by(nickname=args.author).first():
         return jsonify({'result': 'Invalid author!'})
     like = Like.query.filter_by(peer_id=args.peer_id, author=args.author)
     if not like:
         return jsonify({'result': 'Like already removed!'})
     like.delete()
+    DB.session.commit()
+    return jsonify({'result': 'Success'})
+
+
+# обрабатываем установку лайка по идентификатору назначения
+@APP.route('/api/like/set', methods=['POST'])
+def set_like():
+    # парсим параметры POST-запроса
+    parser = reqparse.RequestParser()
+    # парсим id назначения, автора
+    parser.add_argument('peer_id', required=True)
+    parser.add_argument('author', required=True)
+    args = parser.parse_args()
+    if args.author != session.get('nickname'):
+        return jsonify({'result': 'Author and session account does not match!'})
+    # если не был подгружен peer_id
+    if not args.peer_id:
+        return jsonify({'result': 'Invalid peer_id!'})
+    # если пользователя не существует
+    if not args.author or not User.query.filter_by(nickname=args.author).first():
+        return jsonify({'result': 'Invalid author!'})
+    if Like.query.filter_by(peer_id=args.peer_id, author=args.author):
+        return jsonify({'result': 'Like already placed!'})
+    like = Like(args.peer_id, args.author)
+    DB.session.add(like)
     DB.session.commit()
     return jsonify({'result': 'Success'})
 
