@@ -293,10 +293,12 @@ def forum():
         return redirect('/signin')
     # получаем ответ с собственной апишки
     result = post('http://127.0.0.1:8080/api/article/get', data={'offset': 0, 'count': 30}).json()
+    likes = [DB.session.query(Like.peer_id).scalar()]
+    print(likes)
     # если не пришло ничего или пришла ошибка, то переходим на форум бещ подгрузки результата
     if type(result) == list:
         # иначе подгружаем и отрисовываем
-        return render_template('forum.html', articles=result, nickname=session.get('nickname'))
+        return render_template('forum.html', articles=result, nickname=session.get('nickname'), likes=likes)
     else:
         return render_template('forum.html')
 
@@ -486,7 +488,7 @@ def remove_like():
         return jsonify({'result': 'Like already removed!'})
     like.delete()
     DB.session.commit()
-    return jsonify({'result': 'Success'})
+    return jsonify({'result': 'Success!', 'count': len(Like.query.filter_by(peer_id=args.peer_id).all())})
 
 
 # обрабатываем установку лайка по идентификатору назначения
@@ -506,12 +508,12 @@ def set_like():
     # если пользователя не существует
     if not args.author or not User.query.filter_by(nickname=args.author).first():
         return jsonify({'result': 'Invalid author!'})
-    if Like.query.filter_by(peer_id=args.peer_id, author=args.author):
+    if Like.query.filter_by(peer_id=args.peer_id, author=args.author).first():
         return jsonify({'result': 'Like already placed!'})
-    like = Like(args.peer_id, args.author)
+    like = Like(peer_id=args.peer_id, author=args.author)
     DB.session.add(like)
     DB.session.commit()
-    return jsonify({'result': 'Success'})
+    return jsonify({'result': 'Success!', 'count': len(Like.query.filter_by(peer_id=args.peer_id).all())})
 
 
 if __name__ == '__main__':
