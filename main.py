@@ -138,7 +138,7 @@ def top():
     result = []  # результирующий список
     it = 1  # итератор для подсчета
     for user in users:
-        temp = '<a href="user/{nickname}"<strong>{it}. </strong> {nickname} - {level}({exp} exp.)<br>'  # промежуточная
+        temp = '<a href="user/{nickname}"<strong>{it}. </strong> {nickname} - {level}({exp} exp.)<br></a>'  # промежуточная
         result.append(temp.format(it=it, nickname=user.nickname, level=user.level, exp=user.experience))  # обновляем
         it += 1  # инкрементим
     return render_template('top.html', users=''.join(result))  # отрисовываем
@@ -293,7 +293,7 @@ def forum():
     if not session.get('signin'):
         return redirect('/signin')
     # получаем ответ с собственной апишки
-    result = post(HOST + '/api/article/get', data={'offset': 0, 'count': 30}).json()
+    result = post(build_url('/api/article/get'), data={'offset': 0, 'count': 30}).json()
     likes = [peer_id for peer_id, in DB.session.query(Like.peer_id).filter_by(author=session.get('nickname'))]
     # если не пришло ничего или пришла ошибка, то переходим на форум бещ подгрузки результата
     if type(result) == list:
