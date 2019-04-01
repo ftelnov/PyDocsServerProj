@@ -293,7 +293,7 @@ def forum():
     if not session.get('signin'):
         return redirect('/signin')
     # получаем ответ с собственной апишки
-    result = post('http://127.0.0.1:8080/api/article/get', data={'offset': 0, 'count': 30}).json()
+    result = post(HOST + '/api/article/get', data={'offset': 0, 'count': 30}).json()
     likes = [peer_id for peer_id, in DB.session.query(Like.peer_id).filter_by(author=session.get('nickname'))]
     # если не пришло ничего или пришла ошибка, то переходим на форум бещ подгрузки результата
     if type(result) == list:
