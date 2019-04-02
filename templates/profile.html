@@ -24,7 +24,9 @@
                             <strong>Level: </strong><span class="text-primary h5 mt-5">{{level}}</span>
                         <div class="progress">
                             <div class="progress-bar bg-warning" role="progressbar" style="width: {{exp}}%">
-                                {{exp_point}}
+                                {% if exp_point != 0 %}
+                                    {{exp_point}}
+                                {% endif %}
                             </div>
                         </div>
                         <form method="post">
