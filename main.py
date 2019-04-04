@@ -5,6 +5,7 @@ from flask import render_template, redirect, request, session, jsonify
 from flask_restful import reqparse
 from requests import post
 from datetime import datetime
+from werkzeug.middleware.proxy_fix import ProxyFix
 
 from sqlalchemy import desc
 
@@ -547,4 +548,5 @@ def set_like():
 # если не импортируем этот файл
 if __name__ == '__main__':
     DB.create_all()  # инициализируем бдшку
+    APP.wsgi_app = ProxyFix(APP.wsgi_app)
     APP.run(port=PORT, host=HOST)  # запускаем сервак
