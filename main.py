@@ -549,4 +549,4 @@ def set_like():
 if __name__ == '__main__':
     DB.create_all()  # инициализируем бдшку
     APP.wsgi_app = ProxyFix(APP.wsgi_app)
-    APP.run(port=PORT, host=HOST)  # запускаем сервак
+    APP.run()  # запускаем сервак

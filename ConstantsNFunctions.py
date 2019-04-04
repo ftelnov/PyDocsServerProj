@@ -10,8 +10,8 @@ DATABASE_URI = 'sqlite:///main_database.db'  # Uri бдшки
 TRACK_MODIFICATIONS = 'sqlite:///main_database.db'  # отслеживание изменений
 SESSION_TYPE = 'filesystem'  #
 
-HOST = '127.0.0.1'  # хост коннекта на сервер
-PORT = 8080  # порт коннекта на сервер
+HOST = '79.174.13.184'  # хост коннекта на сервер
+PORT = 80  # порт коннекта на сервер
 
 # всевозможные уровни игры с минимальным и максимальным кол-вом опыта в них
 LEVELS = {
