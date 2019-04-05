@@ -15,7 +15,26 @@ from ConstantsNFunctions import *
 # стартовая страничка
 @APP.route('/start', methods=['GET'])
 def index():
-    return render_template('index.html')
+    if session.get('signin'):
+        user = DB.session.query(User).filter_by(nickname=session.get('nickname')).first()
+        # получили пользователя, отфильтровав базу данных
+        user = DB.session.query(User).filter_by(
+            nickname=session.get('nickname')).first()
+        # получили все параметры пользователя
+        identification = user.id  # id
+        exp = user.experience  # опыт
+        nickname = user.nickname  # имя
+        level = user.level  # уровень
+        email = user.email  # почта пользователя
+        profile_image = user.profile_image  # изображение профиля пользователя
+        min_exp, max_exp = LEVELS[level]  # максимальное и минимальное кол-во опыта текущего уровня пользователя
+        # расчитываем опыт и максимальный опыт на основе данных пользователя
+        max_exp -= min_exp
+        exp -= min_exp
+        exp = exp / max_exp * 100
+        return render_template('index.html', signin=1, nickname=nickname, exp=exp, level=user.level,
+                               image_file=profile_image, exp_point=exp)
+    return render_template('index.html', sigin=0)
 
 
 # дефолтная страница

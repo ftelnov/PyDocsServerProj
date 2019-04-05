@@ -7,31 +7,42 @@
             <div class="col-md-12 text-center">
                 <h1 class="text-white"><strong>Python</strong> Documentation Page</h1>
                 <p class="lead mb-5 text-white">A Page For a Developments</p>
-                <p class="mb-0">
-                    <button type="button" class="btn btn-light btn-lg"><a class="nav-link js-scroll-trigger"
-                                                                          href="#amazing-dashboard">О Python</a>
-                    </button>
-                    <button type="button" class="btn btn-outline-light btn-lg"><a class="nav-link js-scroll-trigger"
-                                                                                  href="#why-us"
-                                                                                  style="color: white">Документация</a>
-                    </button>
-                    <button type="button" class="btn btn-outline-light btn-lg"><a class="nav-link js-scroll-trigger"
-                                                                                  href="#features-mid"
-                                                                                  style="color: white">Основы
-                        Python</a></button>
-                    <button type="button" class="btn btn-outline-light btn-lg"><a class="nav-link js-scroll-trigger"
-                                                                                  href="#testimonials"
-                                                                                  style="color: white">Основные
-                        функции</a></button>
-                    <button type="button" class="btn btn-outline-light btn-lg"><a class="nav-link js-scroll-trigger"
-                                                                                  href="#team"
-                                                                                  style="color: white">ООП</a>
-                    </button>
-                    <button type="button" class="btn btn-outline-light btn-lg"><a class="nav-link js-scroll-trigger"
-                                                                                  href="#download-app"
-                                                                                  style="color: white">Начать
-                        работу</a></button>
-                </p>
+                {% if signin == 1:%}
+                <div class="card">
+
+                    <form method="post" enctype="multipart/form-data">
+                        <div class="image-upload">
+                            <label for="file-input">
+                                <img src="../{{image_file}}" id="result-image">
+                            </label>
+                            <input id="file-input" type="file" name="image">
+                        </div>
+                        <input type="submit" class="btn btn-danger btn-sm icofont icofont-ui-home mt-md-2"
+                               name="save-uploaded-image" value="Save photo">
+                    </form>
+
+                    <div class="card-body">
+                        <h2 class="card-title">{{nickname}}</h2>
+                        <span class="section-title-line"></span>
+                        <p class="card-text">
+                            <strong>Level: </strong><span class="text-primary h5 mt-5">{{level}}</span>
+                        <div class="progress">
+                            <div class="progress-bar bg-warning" role="progressbar" style="width: {{exp}}%">
+                                {% if exp_point != 0 %}
+                                {{exp_point}}
+                                {% endif %}
+                            </div>
+                        </div>
+                        <form method="post">
+                            <input type="submit" class="btn btn-primary btn-sm icofont icofont-ui-home mt-md-2"
+                                   name="sign-out" value="Log Out">
+                            <input type="submit" class="btn btn-danger btn-sm icofont icofont-ui-home mt-md-2"
+                                   name="delete-account" value="Delete account">
+                        </form>
+                    </div>
+                </div>
+                {% endif %}
+
                 <div class="mb-5"></div>
                 <img class="img-fluid mt-5 wow fadeInUp" src="../static/img/phone2.png" alt="">
             </div>
@@ -81,7 +92,7 @@
                 Ссылка на русскоязычный аналог - <a target="_blank"
                                                     href="https://pythonworld.ru/">pythonworld.ru</a><br>
                 Как известно, любой вопрос уже происходил с юзерами стака - <a target="_blank"
-                                                                                href="https://stackoverflow.com/">stackoverflow
+                                                                               href="https://stackoverflow.com/">stackoverflow
                     - вопрос-ответ</a>
             </h4>
         </div>
