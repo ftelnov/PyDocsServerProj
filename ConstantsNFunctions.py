@@ -10,7 +10,7 @@ DATABASE_URI = 'sqlite:///main_database.db'  # Uri бдшки
 TRACK_MODIFICATIONS = 'sqlite:///main_database.db'  # отслеживание изменений
 SESSION_TYPE = 'filesystem'  #
 
-HOST = '79.174.13.184'  # хост коннекта на сервер
+HOST = 'pydocs.ru'  # хост коннекта на сервер
 PORT = 80  # порт коннекта на сервер
 
 # всевозможные уровни игры с минимальным и максимальным кол-вом опыта в них
@@ -194,4 +194,4 @@ def comments_to_dict(comments):
 
 # функция построения запроса по локальному пути
 def build_url(url):
-    return 'http://' + HOST + ':' + str(PORT) + url
+    return 'http://' + HOST + url
