@@ -33,13 +33,14 @@
     <nav class="navbar osahan-navbar navbar-expand-lg navbar-dark" id="mainNav">
         <div class="container">
             <a class="navbar-brand js-scroll-trigger" href="/start#page-top"><img class="img-fluid"
-                                                                            src="../static/img/logo.png" alt=""></a>
+                                                                                  src="../static/img/logo.png"
+                                                                                  alt=""></a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive"
                     aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarResponsive">
-                <ul class="navbar-nav ml-auto">
+                <ul class="navbar-nav">
                     <li class="nav-item">
                         <a class="nav-link js-scroll-trigger" href="/start#page-top">Домой</a>
                     </li>
@@ -62,16 +63,17 @@
                         <a class="nav-link js-scroll-trigger" href="/start#download-app">Начать работу</a>
                     </li>
                 </ul>
+                <button class="center btn btn-warning btn-sm icofont icofont-ui-home mr-lg-2"
+                        onclick="window.location.href='/top'" style="float: left">TOP
+                </button>
+                <button class="center btn btn-primary btn-sm icofont icofont-ui-home mr-lg-2"
+                        onclick="window.location.href='/profile'" style="float: left">Profile
+                </button>
+                <button class="center btn btn-primary btn-sm icofont icofont-ui-home mr-lg-2"
+                        onclick="window.location.href='/forum'" style="float: left">Forum
+                </button>
             </div>
-            <form action="/top" class="mr-2">
-                <button class="btn btn-success btn-sm icofont icofont-ui-home">ТОП</button>
-            </form>
-            <form action="/profile" class="mr-2">
-                <button class="btn btn-primary btn-sm icofont icofont-ui-home">Profile</button>
-            </form>
-            <form action="/forum" class="mr-2">
-                <button class="btn btn-primary btn-sm icofont icofont-ui-home">Forum</button>
-            </form>
+
 
         </div>
     </nav>
