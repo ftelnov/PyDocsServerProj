@@ -564,6 +564,33 @@ def set_like():
     return jsonify({'result': 'Success!', 'count': count})
 
 
+# обрабатываем регистрацию пользователя
+@APP.route('/api/user/add', methods=['POST'])
+def add_user():
+    # парсим параметры POST-запроса
+    parser = reqparse.RequestParser()
+    # парсим логин, пароль
+    parser.add_argument('login', required=True)
+    parser.add_argument('password', required=True)
+    parser.add_argument('email', required=True)
+    args = parser.parse_args()
+    # если один из параметров не был передан
+    if not args.login or not args.password or not args.email:
+        return jsonify({'result': 'One of the required param does not exist!'})
+    user = DB.session.query(User).filter_by(nickname=args.login, password=args.password, email=args.email).first()
+    if not user:
+        DB.session.add(User(nickname=args.login, password=args.password, email=args.email))
+        DB.session.commit()
+        return jsonify({'result': 'Success!'})
+    else:
+        errors = []
+        if user.nickname == args.nickname:
+            errors.append('User with such nickname already exist!')
+        if user.email == args.email:
+            errors.append('User with such email already exist!')
+        return jsonify({'result': errors})
+
+
 # если не импортируем этот файл
 if __name__ == '__main__':
     DB.create_all()  # инициализируем бдшку
